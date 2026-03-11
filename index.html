@@ -88,17 +88,9 @@ font-weight:700;
 transition:0.25s;
 }
 
-.btn1{
-background:linear-gradient(90deg,#22c55e,#16a34a);
-}
-
-.btn2{
-background:linear-gradient(90deg,#9333ea,#c026d3);
-}
-
-.btn3{
-background:linear-gradient(90deg,#06b6d4,#0891b2);
-}
+.btn1{background:linear-gradient(90deg,#22c55e,#16a34a);}
+.btn2{background:linear-gradient(90deg,#9333ea,#c026d3);}
+.btn3{background:linear-gradient(90deg,#06b6d4,#0891b2);}
 
 button:hover{
 transform:scale(1.04);
@@ -128,7 +120,7 @@ margin:5px;
 border-radius:10px;
 font-size:14px;
 border:1px solid rgba(255,255,255,0.05);
-transition:0.2s;
+cursor:pointer;
 }
 
 .kata:hover{
@@ -141,6 +133,10 @@ font-weight:700;
 color:#a78bfa;
 }
 
+.best{
+background:#22c55e;
+}
+
 </style>
 </head>
 
@@ -151,17 +147,16 @@ color:#a78bfa;
 <div class="badge">
 By : @Kholiddzz
 
-<!-- VERIFIED TIKTOK STYLE -->
 <svg class="verified" viewBox="0 0 24 24">
 <circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
-<path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
 </svg>
 
 </div>
 
 <h1>Pencari Kata</h1>
 
-<textarea id="input" placeholder="Masukkan Teks....."></textarea>
+<textarea id="input" placeholder="Masukkan teks..."></textarea>
 
 <button class="btn1" onclick="cariDepan()">Cari dari Depan</button>
 <button class="btn2" onclick="cariBelakang()">Cari dari Belakang</button>
@@ -177,34 +172,21 @@ By : @Kholiddzz
 
 <script>
 
-document.addEventListener("contextmenu",e=>e.preventDefault())
-
-document.addEventListener("selectstart",function(e){
-if(e.target.tagName!="TEXTAREA"){
-e.preventDefault()
-}
-})
-
-document.addEventListener("keydown",function(e){
-
-if(
-e.key==="F12" ||
-(e.ctrlKey && e.shiftKey && e.key==="I") ||
-(e.ctrlKey && e.key==="U") ||
-(e.ctrlKey && e.key==="C")
-){
-e.preventDefault()
-}
-
-})
-
 let kamus=[]
 
 fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/id/id_50k.txt")
 .then(res=>res.text())
 .then(data=>{
-kamus=data.split("\n").map(x=>x.split(" ")[0])
+
+kamus=data
+.split("\n")
+.map(x=>x.split(" ")[0].toLowerCase())
+.filter(k=>/^[a-z]+$/.test(k)&&k.length>=3&&k.length<=12)
+
+kamus=[...new Set(kamus)]
+
 document.getElementById("hasil").innerHTML="Kamus siap ("+kamus.length+" kata)"
+
 })
 
 function input(){
@@ -220,32 +202,49 @@ hasil.innerHTML="Tidak ada kata ditemukan"
 return
 }
 
+let terbaik=data.sort((a,b)=>b.length-a.length)[0]
+
 let html="<div class='counter'>"+data.length+" kata ditemukan</div>"
 
-data.slice(0,400).forEach(k=>{
-html+="<span class='kata'>"+k+"</span>"
+data.slice(0,1000).forEach(k=>{
+
+if(k===terbaik){
+html+="<span class='kata best' onclick='copyKata(this)'>"+k+"</span>"
+}else{
+html+="<span class='kata' onclick='copyKata(this)'>"+k+"</span>"
+}
+
 })
 
 hasil.innerHTML=html
 
 }
 
+function copyKata(el){
+
+navigator.clipboard.writeText(el.innerText)
+
+el.style.background="#22c55e"
+
+setTimeout(()=>{
+el.style.background=""
+},500)
+
+}
+
 function cariDepan(){
 let k=input()
-let hasil=kamus.filter(x=>x.startsWith(k))
-tampil(hasil)
+tampil(kamus.filter(x=>x.startsWith(k)))
 }
 
 function cariBelakang(){
 let k=input()
-let hasil=kamus.filter(x=>x.endsWith(k))
-tampil(hasil)
+tampil(kamus.filter(x=>x.endsWith(k)))
 }
 
 function cariSemua(){
 let k=input()
-let hasil=kamus.filter(x=>x.includes(k))
-tampil(hasil)
+tampil(kamus.filter(x=>x.includes(k)))
 }
 
 document.getElementById("input").addEventListener("input",()=>{
@@ -257,7 +256,7 @@ document.getElementById("saran").innerHTML=""
 return
 }
 
-let saran=kamus.filter(x=>x.startsWith(k)).slice(0,5)
+let saran=kamus.filter(x=>x.startsWith(k)).slice(0,6)
 
 document.getElementById("saran").innerHTML="Saran: "+saran.join(", ")
 
