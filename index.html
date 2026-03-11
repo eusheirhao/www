@@ -29,6 +29,20 @@ body {
   border-radius: 22px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+#jam {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #c4b5fd;
+  background: rgba(0,0,0,0.4);
+  padding: 6px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 .badge {
   display: flex;
@@ -126,6 +140,8 @@ button:hover {
 
 <div class="container">
 
+  <div id="jam">Memuat waktu Indonesia...</div>
+
   <div class="badge">
     By : @Kholiddzz
     <svg class="verified" viewBox="0 0 24 24">
@@ -153,20 +169,12 @@ button:hover {
 <script>
 
 const kataTambahan = [
-  // Semua dari request awalmu (sudah lowercase)
   "generatif", "ilustratif", "imitatif", "imperatif", "implikatif", "inovatif", "instruktif", "integratif", "intensif", "interaktif", "interpretatif", "intuitif", "inventif", "investigatif", "justifikatif", "kognitif", "komparatif", "komunikatif", "konfirmatif", "konotatif", "konstruktif", "konsultatif", "konsumtif", "kreatif", "kualitatif", "kuantitatif", "legislatif", "lokatif", "manipulatif", "naratif",
   "objektif", "operatif", "partisipatif", "pasif", "persuasif", "prediktif", "preventif", "produktif", "progresif", "prohibitif", "protektif", "provokatif", "reaktif", "reflektif", "regulatif", "relatif", "representatif", "reproduktif", "restriktif", "selektif", "sensitif", "solutif", "spesifik", "subjektif", "substantif", "sugestif", "suportif", "transformatif", "informatif", "kolektif",
   "aktif", "adaptif", "adiktif", "administratif", "afektif", "agresif", "alternatif", "argumentatif", "asosiatif", "atraktif", "autoritatif", "deduktif", "definitif", "deformatif", "demonstratif", "deskriptif", "detektif", "direktif", "distributif", "edukatif", "efektif", "ekspansif", "ekspresif", "eksploratif", "eksploitatif", "ekstensif", "evaluatif", "evokatif", "fiktif", "formulatif",
-
-  // Ekspansi lengkap akhiran -if / -tif (ilmiah, umum, teknis – hampir semua yang sering muncul)
-  "kualifikatif", "konservatif", "konseptual", "kontradiktif", "korelatif", "kritis", "kuratif", "limitatif", "logaritmik", "magnetif", "manifestif", "modifikatif", "motivatif", "negatif", "normatif", "oklusif", "operasional", "optatif", "organisatif", "perfektif", "perseptif", "positif", "preskriptif", "presipitatif", "proaktif", "prospektif", "purifikatif", "realistif", "reduktif", "refleksif", "reformatif", "regresif", "relaksatif", "repetitif", "respektif", "restoratif", "retrospektif", "revisif", "simulatif", "spekulatif", "statif", "strategif", "subversif", "suksesif", "superlatif", "supresif", "sistematif", "tentatif", "transitif", "verifikatif", "vokalif", "akomodatif", "aplikatif", "asertif", "autentikatif", "cooperatif", "defensif", "destruktif", "difusif", "disruptif", "eksklusif", "ekstensif", "emulsif", "enklusif", "evasif", "expansif", "fakultatif", "fertilif", "fruktif", "imperfektif", "impressif", "indikatif", "infinitif", "inhibitif", "instingtif", "interogatif", "introspektif", "konjugatif", "konklusif", "konstitutif", "konversif", "korosif", "kreatif", "kualitatif", "kreatif", "kualitatif", "kreatif", "kualitatif", "kreatif",
-
-  // Kata berawalan X- (hampir lengkap dari kamus Indonesia)
+  "kualifikatif", "konservatif", "konseptual", "kontradiktif", "korelatif", "kritis", "kuratif", "limitatif", "logaritmik", "magnetif", "manifestif", "modifikatif", "motivatif", "negatif", "normatif", "oklusif", "operasional", "optatif", "organisatif", "perfektif", "perseptif", "positif", "preskriptif", "presipitatif", "proaktif", "prospektif", "purifikatif", "realistif", "reduktif", "refleksif", "reformatif", "regresif", "relaksatif", "repetitif", "respektif", "restoratif", "retrospektif", "revisif", "simulatif", "spekulatif", "statif", "strategif", "subversif", "suksesif", "superlatif", "supresif", "sistematif", "tentatif", "transitif", "verifikatif", "vokalif", "akomodatif", "aplikatif", "asertif", "autentikatif", "cooperatif", "defensif", "destruktif", "difusif", "disruptif", "eksklusif", "ekstensif", "emulsif", "enklusif", "evasif", "expansif", "fakultatif", "fertilif", "fruktif", "imperfektif", "impressif", "indikatif", "infinitif", "inhibitif", "instingtif", "interogatif", "introspektif", "konjugatif", "konklusif", "konstitutif", "konversif", "korosif", "kreatif", "kualitatif",
   "xenon", "xantat", "xantenda", "xantofil", "xenia", "xenofili", "xenofobia", "xenoglosia", "xenograf", "xenokrasi", "xenolit", "xenomania", "xerofil", "xeroftalmia", "xerografi", "xerosis", "xifoid", "xilem", "xilena", "xilosa", "xilofon", "xilograf", "xilografi", "xiloid", "xiloidina", "xilol", "xilologi", "xilonit", "xilos", "xantena", "xerofit", "x-ray", "xenograf", "xantofil", "xeroderma",
-
-  // Tambahan pola lain yang berguna (akhir -al, -is, -ik, dll – biar pencarian lebih kaya)
   "nasional", "internasional", "regional", "lokal", "global", "digital", "virtual", "fisikal", "mental", "emosional", "sosial", "kultural", "tradisional", "modern", "klasikal", "teknikal", "medis", "klinis", "patologis", "simetris", "asimetri", "organik", "inorganik", "atomik", "molekuler", "biologis", "psikologis", "sosiologis", "ekonomis", "historis", "geografis", "astronomis", "matematis", "fisik", "kimiawi", "biokimia", "genetik", "evolusioner", "filosofis", "etis", "moralis", "estetis", "praktis", "teoritis", "empiris", "analitis", "sintetis", "dialektis", "heuristik", "intuitif", "logis", "metodis", "statistik", "dinamis", "statis", "kronologis", "hierarkis", "sistematis"
-
 ].map(w => w.toLowerCase());
 
 let kamus = [];
@@ -177,16 +185,51 @@ fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/conten
     kamus = data
       .split("\n")
       .map(x => x.split(" ")[0].toLowerCase())
-      .filter(k => /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);  // max length dinaikkan lagi
+      .filter(k => /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
 
-    // Prioritaskan kata tambahan + hapus duplikat
     kamus = [...new Set([...kataTambahan, ...kamus])];
 
-    document.getElementById("hasil").innerHTML = "Kamus siap";
+    document.getElementById("hasil").innerHTML = "Kamus siap (" + kamus.length + " kata)";
   })
   .catch(err => {
     document.getElementById("hasil").innerHTML = "Gagal memuat kamus";
   });
+
+// === BAGIAN JAM REAL-TIME + AUTO RELOAD SAAT GANTI HARI ===
+let hariSebelumnya = null;
+
+function updateJam() {
+  const now = new Date();
+  const options = {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  };
+  const formatter = new Intl.DateTimeFormat('id-ID', options);
+  let waktu = formatter.format(now) + " WIB";
+
+  document.getElementById("jam").innerHTML = waktu;
+
+  // Cek apakah hari sudah berganti
+  const hariSekarang = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
+  
+  if (hariSebelumnya !== null && hariSebelumnya !== hariSekarang) {
+    // Hari sudah berganti → reload halaman otomatis
+    console.log("Hari berganti! Reload halaman...");
+    window.location.reload();
+  }
+  
+  hariSebelumnya = hariSekarang;
+}
+
+// Jalankan pertama kali + setiap detik
+setInterval(updateJam, 1000);
+updateJam();
 
 function input() {
   return document.getElementById("input").value.toLowerCase().trim();
@@ -195,18 +238,20 @@ function input() {
 function tampil(data) {
   let hasil = document.getElementById("hasil");
 
-  if (data.length === 0) {
+  const uniqueData = [...new Set(data)];
+
+  if (uniqueData.length === 0) {
     hasil.innerHTML = "Tidak ada kata ditemukan";
     return;
   }
 
-  data.sort((a, b) => b.length - a.length || a.localeCompare(b));
+  uniqueData.sort((a, b) => b.length - a.length || a.localeCompare(b));
 
-  let terbaik = data[0];
+  let terbaik = uniqueData[0];
 
-  let html = "<div class='counter'>" + data.length + " kata ditemukan</div>";
+  let html = "<div class='counter'>" + uniqueData.length + " kata ditemukan (duplikat sudah dihapus)</div>";
 
-  data.slice(0, 2000).forEach(k => {  // limit tampilan dinaikkan
+  uniqueData.slice(0, 2000).forEach(k => {
     if (k === terbaik) {
       html += "<span class='kata best' onclick='copyKata(this)'>" + k + "</span>";
     } else {
