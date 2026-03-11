@@ -6,137 +6,119 @@
 <title>Pencari Kata Indonesia</title>
 
 <style>
-
-*{
-user-select:none;
--webkit-user-select:none;
-box-sizing:border-box;
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  box-sizing: border-box;
 }
-
-body{
-font-family:system-ui;
-background:linear-gradient(135deg,#6d28d9,#020617);
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+body {
+  font-family: system-ui;
+  background: linear-gradient(135deg, #6d28d9, #020617);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
-
-.container{
-width:460px;
-backdrop-filter:blur(10px);
-background:rgba(15,23,42,0.85);
-padding:30px;
-border-radius:22px;
-box-shadow:0 25px 60px rgba(0,0,0,0.6);
-border:1px solid rgba(255,255,255,0.05);
+.container {
+  width: 460px;
+  backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.85);
+  padding: 30px;
+  border-radius: 22px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
-.badge{
-display:flex;
-align-items:center;
-gap:6px;
-background:linear-gradient(90deg,#9333ea,#c026d3);
-padding:6px 14px;
-border-radius:20px;
-font-size:13px;
-margin-bottom:10px;
-font-weight:600;
-width:fit-content;
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(90deg, #9333ea, #c026d3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  width: fit-content;
 }
-
-.verified{
-width:18px;
-height:18px;
+.verified {
+  width: 18px;
+  height: 18px;
 }
-
-h1{
-margin:0;
-font-size:34px;
-font-weight:700;
+h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
 }
-
-textarea{
-width:100%;
-height:90px;
-margin-top:18px;
-border:none;
-border-radius:14px;
-padding:14px;
-background:#1e293b;
-color:white;
-font-size:16px;
-outline:none;
-user-select:text;
+textarea {
+  width: 100%;
+  height: 90px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  background: #1e293b;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  user-select: text;
 }
-
-textarea:focus{
-box-shadow:0 0 0 2px #7c3aed;
+textarea:focus {
+  box-shadow: 0 0 0 2px #7c3aed;
 }
-
-button{
-width:100%;
-padding:14px;
-margin-top:12px;
-border:none;
-border-radius:14px;
-font-size:16px;
-cursor:pointer;
-font-weight:700;
-transition:0.25s;
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.25s;
 }
-
-.btn1{background:linear-gradient(90deg,#22c55e,#16a34a);}
-.btn2{background:linear-gradient(90deg,#9333ea,#c026d3);}
-.btn3{background:linear-gradient(90deg,#06b6d4,#0891b2);}
-
-button:hover{
-transform:scale(1.04);
-box-shadow:0 8px 25px rgba(0,0,0,0.5);
+.btn1 { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.btn2 { background: linear-gradient(90deg, #9333ea, #c026d3); }
+.btn3 { background: linear-gradient(90deg, #06b6d4, #0891b2); }
+button:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
-
-#saran{
-margin-top:10px;
-font-size:13px;
-opacity:0.85;
+#saran {
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.85;
 }
-
-#hasilBox{
-margin-top:20px;
-background:#0f172a;
-border-radius:14px;
-padding:14px;
-max-height:240px;
-overflow:auto;
+#hasilBox {
+  margin-top: 20px;
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 14px;
+  max-height: 240px;
+  overflow: auto;
 }
-
-.kata{
-display:inline-block;
-background:#020617;
-padding:7px 12px;
-margin:5px;
-border-radius:10px;
-font-size:14px;
-border:1px solid rgba(255,255,255,0.05);
-cursor:pointer;
+.kata {
+  display: inline-block;
+  background: #020617;
+  padding: 7px 12px;
+  margin: 5px;
+  border-radius: 10px;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
 }
-
-.kata:hover{
-background:#7c3aed;
+.kata:hover {
+  background: #7c3aed;
 }
-
-.counter{
-margin-bottom:10px;
-font-weight:700;
-color:#a78bfa;
+.counter {
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #a78bfa;
 }
-
-.best{
-background:#22c55e;
+.best {
+  background: #22c55e;
 }
-
 </style>
 </head>
 
@@ -144,123 +126,147 @@ background:#22c55e;
 
 <div class="container">
 
-<div class="badge">
-By : @Kholiddzz
+  <div class="badge">
+    By : @Kholiddzz
+    <svg class="verified" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
+      <path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
+    </svg>
+  </div>
 
-<svg class="verified" viewBox="0 0 24 24">
-<circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
-<path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
-</svg>
+  <h1>Pencari Kata</h1>
 
-</div>
+  <textarea id="input" placeholder="Masukkan teks..."></textarea>
 
-<h1>Pencari Kata</h1>
+  <button class="btn1" onclick="cariDepan()">Cari dari Depan</button>
+  <button class="btn2" onclick="cariBelakang()">Cari dari Belakang</button>
+  <button class="btn3" onclick="cariSemua()">Cari Semua</button>
 
-<textarea id="input" placeholder="Masukkan teks..."></textarea>
+  <div id="saran"></div>
 
-<button class="btn1" onclick="cariDepan()">Cari dari Depan</button>
-<button class="btn2" onclick="cariBelakang()">Cari dari Belakang</button>
-<button class="btn3" onclick="cariSemua()">Cari Semua</button>
-
-<div id="saran"></div>
-
-<div id="hasilBox">
-<div id="hasil">Memuat kamus...</div>
-</div>
+  <div id="hasilBox">
+    <div id="hasil">Memuat kamus...</div>
+  </div>
 
 </div>
 
 <script>
 
-let kamus=[]
+const kataTambahan = [
+  // 1. Berakhiran -f / -if (bagian 1)
+  "generatif", "ilustratif", "imitatif", "imperatif", "implikatif", "inovatif",
+  "instruktif", "integratif", "intensif", "interaktif", "interpretatif", "intuitif",
+  "inventif", "investigatif", "justifikatif", "kognitif", "komparatif", "komunikatif",
+  "konfirmatif", "konotatif", "konstruktif", "konsultatif", "konsumtif", "kreatif",
+  "kualitatif", "kuantitatif", "legislatif", "lokatif", "manipulatif", "naratif",
+
+  // 2. Berakhiran -f / -if (bagian 2)
+  "objektif", "operatif", "partisipatif", "pasif", "persuasif", "prediktif",
+  "preventif", "produktif", "progresif", "prohibitif", "protektif", "provokatif",
+  "reaktif", "reflektif", "regulatif", "relatif", "representatif", "reproduktif",
+  "restriktif", "selektif", "sensitif", "solutif", "spesifik", "subjektif",
+  "substantif", "sugestif", "suportif", "transformatif", "informatif", "kolektif",
+
+  // 3. Berakhiran -f / -if (bagian 3)
+  "aktif", "adaptif", "adiktif", "administratif", "afektif", "agresif",
+  "alternatif", "argumentatif", "asosiatif", "atraktif", "autoritatif", "deduktif",
+  "definitif", "deformatif", "demonstratif", "deskriptif", "detektif", "direktif",
+  "distributif", "edukatif", "efektif", "ekspansif", "ekspresif", "eksploratif",
+  "eksploitatif", "ekstensif", "evaluatif", "evokatif", "fiktif", "formulatif",
+
+  // 4. Kata berawalan X-
+  "xenon", "xantat", "xantenda", "xantofil", "xenia", "xenofili", "xenofobia",
+  "xenoglosia", "xenongraf", "xenokrasi", "xenolit", "xenomania", "xerofil",
+  "xeroftalmia", "xerografi", "xerosis", "xifoid", "xilem", "xilena", "xilosa",
+  "xilofon", "xilograf", "xilografi", "xiloid", "xiloidina", "xilol", "xilologi",
+  "xilonit", "xilos"
+].map(w => w.toLowerCase());
+
+let kamus = [];
 
 fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/id/id_50k.txt")
-.then(res=>res.text())
-.then(data=>{
+  .then(res => res.text())
+  .then(data => {
+    kamus = data
+      .split("\n")
+      .map(x => x.split(" ")[0].toLowerCase())
+      .filter(k => /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 12);
 
-kamus=data
-.split("\n")
-.map(x=>x.split(" ")[0].toLowerCase())
-.filter(k=>/^[a-z]+$/.test(k)&&k.length>=3&&k.length<=12)
+    // Gabungkan + hapus duplikat
+    kamus = [...new Set([...kataTambahan, ...kamus])];
 
-kamus=[...new Set(kamus)]
+    // Hanya tampil pesan sederhana tanpa jumlah kata
+    document.getElementById("hasil").innerHTML = "Kamus siap";
+  })
+  .catch(err => {
+    document.getElementById("hasil").innerHTML = "Gagal memuat kamus";
+  });
 
-document.getElementById("hasil").innerHTML="Kamus siap ("+kamus.length+" kata)"
-
-})
-
-function input(){
-return document.getElementById("input").value.toLowerCase()
+function input() {
+  return document.getElementById("input").value.toLowerCase().trim();
 }
 
-function tampil(data){
+function tampil(data) {
+  let hasil = document.getElementById("hasil");
 
-let hasil=document.getElementById("hasil")
+  if (data.length === 0) {
+    hasil.innerHTML = "Tidak ada kata ditemukan";
+    return;
+  }
 
-if(data.length==0){
-hasil.innerHTML="Tidak ada kata ditemukan"
-return
+  // Urutkan: terpanjang dulu, lalu alfabet
+  data.sort((a, b) => b.length - a.length || a.localeCompare(b));
+
+  let terbaik = data[0];
+
+  let html = "<div class='counter'>" + data.length + " kata ditemukan</div>";
+
+  data.slice(0, 1000).forEach(k => {
+    if (k === terbaik) {
+      html += "<span class='kata best' onclick='copyKata(this)'>" + k + "</span>";
+    } else {
+      html += "<span class='kata' onclick='copyKata(this)'>" + k + "</span>";
+    }
+  });
+
+  hasil.innerHTML = html;
 }
 
-let terbaik=data.sort((a,b)=>b.length-a.length)[0]
-
-let html="<div class='counter'>"+data.length+" kata ditemukan</div>"
-
-data.slice(0,1000).forEach(k=>{
-
-if(k===terbaik){
-html+="<span class='kata best' onclick='copyKata(this)'>"+k+"</span>"
-}else{
-html+="<span class='kata' onclick='copyKata(this)'>"+k+"</span>"
+function copyKata(el) {
+  navigator.clipboard.writeText(el.innerText);
+  const originalBg = el.style.background;
+  el.style.background = "#22c55e";
+  setTimeout(() => { el.style.background = originalBg; }, 500);
 }
 
-})
-
-hasil.innerHTML=html
-
+function cariDepan() {
+  let k = input();
+  if (!k) return;
+  tampil(kamus.filter(x => x.startsWith(k)));
 }
 
-function copyKata(el){
-
-navigator.clipboard.writeText(el.innerText)
-
-el.style.background="#22c55e"
-
-setTimeout(()=>{
-el.style.background=""
-},500)
-
+function cariBelakang() {
+  let k = input();
+  if (!k) return;
+  tampil(kamus.filter(x => x.endsWith(k)));
 }
 
-function cariDepan(){
-let k=input()
-tampil(kamus.filter(x=>x.startsWith(k)))
+function cariSemua() {
+  let k = input();
+  if (!k) return;
+  tampil(kamus.filter(x => x.includes(k)));
 }
 
-function cariBelakang(){
-let k=input()
-tampil(kamus.filter(x=>x.endsWith(k)))
-}
+document.getElementById("input").addEventListener("input", () => {
+  let k = input();
+  if (k.length < 2) {
+    document.getElementById("saran").innerHTML = "";
+    return;
+  }
 
-function cariSemua(){
-let k=input()
-tampil(kamus.filter(x=>x.includes(k)))
-}
-
-document.getElementById("input").addEventListener("input",()=>{
-
-let k=input()
-
-if(k.length<2){
-document.getElementById("saran").innerHTML=""
-return
-}
-
-let saran=kamus.filter(x=>x.startsWith(k)).slice(0,6)
-
-document.getElementById("saran").innerHTML="Saran: "+saran.join(", ")
-
-})
+  let saran = kamus.filter(x => x.startsWith(k)).slice(0, 6);
+  document.getElementById("saran").innerHTML = "Saran: " + (saran.length ? saran.join(", ") : "—");
+});
 
 </script>
 
