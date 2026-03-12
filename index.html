@@ -6,108 +6,245 @@
 <title>Pencari Kata Indonesia</title>
 
 <style>
-* { user-select: none; -webkit-user-select: none; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; }
 body {
-  font-family: system-ui;
-  background: linear-gradient(135deg, #6d28d9, #020617);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  font-family:system-ui, -apple-system, sans-serif;
+  background:#0a0a0a;
+  color:#e0e0e0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:20px 10px;
 }
 .container {
-  width: 460px;
-  backdrop-filter: blur(10px);
-  background: rgba(15, 23, 42, 0.85);
-  padding: 30px;
-  border-radius: 22px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  position: relative;
+  width:100%;
+  max-width:540px;
+  backdrop-filter:blur(12px);
+  background:rgba(18,18,18,0.96);
+  padding:28px 24px;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.95);
+  border:1px solid #2a2a2a;
+  position:relative;
 }
 #jam {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #c4b5fd;
-  background: rgba(0,0,0,0.4);
-  padding: 6px 12px;
-  border-radius: 12px;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  position:absolute;
+  top:14px; right:18px;
+  font-size:12px;
+  color:#888;
+  background:rgba(30,30,30,0.8);
+  padding:4px 10px;
+  border-radius:8px;
 }
-.tutorial-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0 15px;
+.badge {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#1c1c1c;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:13px;
+  margin-bottom:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background 0.2s, transform 0.2s;
+  text-decoration:none;
+  color:#e0e0e0;
 }
-.tutorial-btn {
-  width: 44px;
-  height: 44px;
-  background: #7c3aed;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+.badge:hover { 
+  background:#2c2c2c; 
+  transform:scale(1.03); 
 }
-.tutorial-btn:hover {
-  transform: scale(1.12);
-  background: #9f7aea;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+.verified { width:18px; height:18px; }
+h1 {
+  font-size:32px;
+  font-weight:700;
+  color:#f5f5f5;
+  margin-bottom:16px;
+  text-align:center;
 }
-.badge { display: flex; align-items: center; gap: 6px; background: linear-gradient(90deg, #9333ea, #c026d3); padding: 6px 14px; border-radius: 20px; font-size: 13px; margin-bottom: 10px; font-weight: 600; width: fit-content; }
-.verified { width: 18px; height: 18px; }
-h1 { margin: 0; font-size: 34px; font-weight: 700; }
-textarea { width: 100%; height: 90px; margin-top: 18px; border: none; border-radius: 14px; padding: 14px; background: #1e293b; color: white; font-size: 16px; outline: none; user-select: text; }
-textarea:focus { box-shadow: 0 0 0 2px #7c3aed; }
-button { width: 100%; padding: 14px; margin-top: 12px; border: none; border-radius: 14px; font-size: 16px; cursor: pointer; font-weight: 700; transition: 0.25s; }
-.btn1 { background: linear-gradient(90deg, #22c55e, #16a34a); }
-.btn2 { background: linear-gradient(90deg, #9333ea, #c026d3); }
-.btn3 { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-.btn4 { background: linear-gradient(90deg, #f59e0b, #d97706); }
-button:hover { transform: scale(1.04); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); }
-#saran, #stats { margin-top: 10px; font-size: 13px; opacity: 0.85; }
-#hasilBox { margin-top: 20px; background: #0f172a; border-radius: 14px; padding: 14px; max-height: 240px; overflow: auto; }
-.kata { display: inline-block; background: #020617; padding: 7px 12px; margin: 5px; border-radius: 10px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; }
-.kata:hover { background: #7c3aed; }
-.kata.best { background: #22c55e; }
-.highlight { background: #fbbf24; color: #1e293b; border-radius: 3px; padding: 1px 3px; }
-.fav::after { content: "★"; color: #fbbf24; margin-left: 4px; font-size: 12px; }
-.counter { margin-bottom: 10px; font-weight: 700; color: #a78bfa; }
-.filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; font-size: 13px; align-items: center; }
-.filter-row label { cursor: pointer; }
-input[type="range"] { width: 100px; accent-color: #7c3aed; }
-input[type="checkbox"] { accent-color: #7c3aed; }
-#tutorialModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; justify-content: center; align-items: center; }
-#tutorialContent { background: #0f172a; padding: 24px; border-radius: 16px; max-width: 90%; max-height: 85vh; overflow-y: auto; position: relative; }
-.close-btn { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: #94a3b8; }
+textarea {
+  width:100%;
+  height:100px;
+  margin:16px 0 14px;
+  border:1px solid #2e2e2e;
+  border-radius:12px;
+  padding:14px;
+  background:#0f0f0f;
+  color:#f0f0f0;
+  font-size:15.5px;
+  outline:none;
+  resize:none;
+  line-height:1.5;
+}
+textarea:focus {
+  border-color:#4a4a4a;
+  box-shadow:0 0 0 2.5px rgba(80,80,80,0.5);
+}
+button {
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border:none;
+  border-radius:12px;
+  font-size:15.5px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.22s;
+  color:#fff;
+}
+.btn1 { background:#3a3a3a; }
+.btn2 { background:#4a4a4a; }
+.btn3 { background:#2a2a2a; }
+.btn4 { background:#5a5a5a; }
+button:hover { filter:brightness(1.25); transform:translateY(-2px); }
+#saran, #stats {
+  margin:10px 0;
+  font-size:13.5px;
+  color:#bbb;
+  text-align:center;
+  line-height:1.4;
+}
+#hasilBox {
+  margin-top:20px;
+  background:#0d0d0d;
+  border:1px solid #222;
+  border-radius:12px;
+  padding:16px 14px;
+  max-height:380px;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+}
+#hasil {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 12px;
+}
+.kata {
+  background:#1a1a1a;
+  padding:10px 16px;
+  border-radius:10px;
+  font-size:14.5px;
+  border:1px solid #2f2f2f;
+  cursor:pointer;
+  color:#e0e0e0;
+  transition:all 0.18s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+  white-space:nowrap;
+  flex:0 0 auto;
+  max-width:100%;
+}
+.kata:hover {
+  background:#2a2a2a;
+  border-color:#505050;
+  transform:scale(1.04);
+  box-shadow:0 5px 14px rgba(0,0,0,0.55);
+}
+.kata.best {
+  background:#404040;
+  color:#ffffff;
+  font-weight:600;
+  border-color:#707070;
+}
+.highlight {
+  background:#707070;
+  color:#fff;
+  padding:2px 5px;
+  border-radius:4px;
+}
+.fav::after {
+  content:"★";
+  color:#ccc;
+  margin-left:7px;
+  font-size:12px;
+}
+.counter {
+  margin:0 0 14px;
+  font-weight:600;
+  color:#999;
+  font-size:14.5px;
+  text-align:center;
+  width:100%;
+}
+.filter-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  margin:14px 0;
+  font-size:14px;
+  color:#ccc;
+  justify-content:center;
+}
+.filter-row label { cursor:pointer; }
+input[type="range"] { accent-color:#888; width:110px; }
+input[type="checkbox"] { accent-color:#999; }
+#tutorialModal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:1000;
+  justify-content:center;
+  align-items:center;
+}
+#tutorialContent {
+  background:#161616;
+  padding:24px;
+  border-radius:16px;
+  max-width:90%;
+  max-height:88vh;
+  overflow-y:auto;
+  border:1px solid #333;
+  color:#ddd;
+  position:relative;
+}
+.close-btn {
+  position:absolute;
+  top:10px; right:16px;
+  font-size:36px;
+  cursor:pointer;
+  color:#777;
+}
+#toast {
+  position:fixed;
+  bottom:60px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#1e1e1e;
+  color:#1d9bf0;
+  padding:12px 28px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:15px;
+  opacity:0;
+  pointer-events:none;
+  transition:all 0.4s ease;
+  z-index:2000;
+  border:1px solid #404040;
+}
+#toast.show {
+  opacity:1;
+  transform:translateX(-50%) translateY(-25px);
+}
 </style>
 </head>
-
 <body>
 
 <div class="container">
-  <div id="jam">Memuat waktu Indonesia...</div>
+  <div id="jam">Memuat waktu...</div>
 
-  <div class="badge">
-    By : @Kholiddzz
+  <a href="https://www.tiktok.com/@kholiddzz" target="_blank" class="badge" onclick="showVerified()">
+    @Kholiddzz
     <svg class="verified" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
       <path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
     </svg>
-  </div>
+  </a>
 
   <h1>Pencari Kata</h1>
 
-  <textarea id="input" placeholder="Masukkan teks..."></textarea>
+  <textarea id="input" placeholder="Ketik pola / kata di sini..."></textarea>
 
   <div class="filter-row">
     <label><input type="checkbox" id="realtime" checked> Realtime</label>
@@ -115,7 +252,7 @@ input[type="checkbox"] { accent-color: #7c3aed; }
     <label><input type="checkbox" id="favoritOnly"> Favorit saja</label>
   </div>
 
-  <div class="filter-row" style="justify-content: space-between;">
+  <div class="filter-row" style="justify-content:space-between; gap:12px; flex-wrap:nowrap;">
     Panjang: 
     <input type="range" id="minLen" min="2" max="16" value="3"> <span id="minVal">3</span>
     —
@@ -127,12 +264,12 @@ input[type="checkbox"] { accent-color: #7c3aed; }
   <button class="btn3" onclick="cari('semua')">Cari Semua</button>
   <button class="btn4" onclick="cariAnagram()">Cari Anagram</button>
 
-  <div class="tutorial-wrapper">
+  <div class="tutorial-wrapper" style="margin:20px 0;">
     <button class="tutorial-btn" onclick="document.getElementById('tutorialModal').style.display='flex'">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
-        <path d="M12 16V12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="12" cy="8" r="1" fill="white"/>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16V12"/>
+        <circle cx="12" cy="8" r="1" fill="#aaa"/>
       </svg>
     </button>
   </div>
@@ -145,41 +282,41 @@ input[type="checkbox"] { accent-color: #7c3aed; }
   </div>
 </div>
 
-<!-- Modal Tutorial -->
+<div id="toast">Terverifikasi</div>
+
 <div id="tutorialModal" onclick="if(event.target===this)this.style.display='none'">
   <div id="tutorialContent">
     <span class="close-btn" onclick="document.getElementById('tutorialModal').style.display='none'">×</span>
     <h2>Cara Pakai</h2>
-    <p>Ketik pola → pilih tombol atau aktifkan Realtime.</p>
-    <ul style="padding-left: 20px; line-height: 1.5; font-size: 14px;">
-      <li><b>Dari Depan</b>: awalan (kreat → kreatif...)</li>
-      <li><b>Dari Belakang</b>: akhiran (if → aktif, pasif...)</li>
-      <li><b>Cari Semua</b>: mengandung huruf</li>
-      <li><b>Anagram</b>: huruf sama & jumlah sama</li>
-      <li><b>Highlight</b>: huruf cocok kuning</li>
-      <li><b>Favorit</b>: double-click → ★ (simpan)</li>
-      <li>Slider: batasi panjang kata</li>
-      <li>Klik kata: copy</li>
+    <p>Ketik pola → pilih tombol atau biarkan Realtime aktif.</p>
+    <ul style="padding-left:20px; font-size:14px; line-height:1.6; margin:12px 0;">
+      <li><b>Dari Depan</b> → awalan kata</li>
+      <li><b>Dari Belakang</b> → akhiran kata</li>
+      <li><b>Cari Semua</b> → mengandung huruf/pola</li>
+      <li><b>Anagram</b> → huruf sama (acak)</li>
+      <li>Double-click kata → tambah/hapus favorit ★</li>
+      <li>Klik kata → salin ke clipboard</li>
     </ul>
-    <p style="margin-top: 16px; font-size: 14px;">Selamat mencari! 🚀</p>
+    <p style="margin-top:20px; text-align:center;">Selamat mencoba! ✦</p>
   </div>
 </div>
 
 <script>
+// Kode JavaScript tetap sama seperti versi sebelumnya (sudah diperbaiki dan ditingkatkan)
 const kataTambahan = [
-  "adaptif", "adiktif", "administratif", "afektif", "agresif", "aktif", "alternatif", "argumentatif", "asosiatif", "atraktif",
-  "autoritatif", "deduktif", "definitif", "deformatif", "demonstratif", "deskriptif", "detektif", "direktif", "distributif", "edukatif",
-  "efektif", "ekspansif", "ekspresif", "eksploratif", "eksploitatif", "ekstensif", "evaluatif", "evokatif", "fiktif", "formulatif",
-  "generatif", "ilustratif", "imitatif", "imperatif", "implikatif", "informatif", "inovatif", "instruktif", "integratif", "intensif",
-  "interaktif", "interpretatif", "intuitif", "inventif", "investigatif", "justifikatif", "kognitif", "kolektif", "komparatif", "komunikatif",
-  "konfirmatif", "konotatif", "konstruktif", "konsultatif", "konsumtif", "kreatif", "kualitatif", "kuantitatif", "legislatif", "lokatif",
-  "manipulatif", "naratif", "objektif", "operatif", "partisipatif", "pasif", "persuasif", "prediktif", "preventif", "produktif",
-  "progresif", "prohibitif", "protektif", "provokatif", "reaktif", "reflektif", "regulatif", "relatif", "representatif", "reproduktif",
-  "restriktif", "selektif", "sensitif", "solutif", "spesifik", "subjektif", "substantif", "sugestif", "suportif", "transformatif",
-  "xantat", "xantenda", "xantofil", "xenia", "xenofili", "xenofobia", "xenoglosia", "xenokrasi", "xenolit", "xenomania",
-  "xenon", "xenongraf", "xerofil", "xeroftalmia", "xerografi", "xerosis", "xifoid", "xilem", "xilena", "xilosa",
-  "xilofon", "xilograf", "xilografi", "xiloid", "xiloidina", "xilol", "xilologi", "xilonit", "xilos"
-].map(w => w.toLowerCase());
+  "adaptif","adiktif","administratif","afektif","agresif","aktif","alternatif","argumentatif","asosiatif","atraktif",
+  "autoritatif","deduktif","definitif","deformatif","demonstratif","deskriptif","detektif","direktif","distributif","edukatif",
+  "efektif","ekspansif","ekspresif","eksploratif","eksploitatif","ekstensif","evaluatif","evokatif","fiktif","formulatif",
+  "generatif","ilustratif","imitatif","imperatif","implikatif","informatif","inovatif","instruktif","integratif","intensif",
+  "interaktif","interpretatif","intuitif","inventif","investigatif","justifikatif","kognitif","kolektif","komparatif","komunikatif",
+  "konfirmatif","konotatif","konstruktif","konsultatif","konsumtif","kreatif","kualitatif","kuantitatif","legislatif","lokatif",
+  "manipulatif","naratif","objektif","operatif","partisipatif","pasif","persuasif","prediktif","preventif","produktif",
+  "progresif","prohibitif","protektif","provokatif","reaktif","reflektif","regulatif","relatif","representatif","reproduktif",
+  "restriktif","selektif","sensitif","solutif","spesifik","subjektif","substantif","sugestif","suportif","transformatif",
+  "xantat","xantenda","xantofil","xenia","xenofili","xenofobia","xenoglosia","xenokrasi","xenolit","xenomania",
+  "xenon","xenongraf","xerofil","xeroftalmia","xerografi","xerosis","xifoid","xilem","xilena","xilosa",
+  "xilofon","xilograf","xilografi","xiloid","xiloidina","xilol","xilologi","xilonit","xilos"
+].map(w=>w.toLowerCase());
 
 let kamus = [];
 let favorites = JSON.parse(localStorage.getItem("favKata") || "[]");
@@ -188,14 +325,15 @@ fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/conten
   .then(res => res.text())
   .then(data => {
     kamus = data.split("\n")
-      .map(x => x.split(" ")[0].toLowerCase())
-      .filter(k => /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
+      .map(x => x.split(" ")[0]?.toLowerCase?.())
+      .filter(k => k && /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
     kamus = [...new Set([...kataTambahan, ...kamus])];
-    document.getElementById("hasil").innerHTML = "Kamus siap (" + kamus.length + " kata)";
+    document.getElementById("hasil").innerHTML = `Kamus siap (${kamus.length.toLocaleString('id-ID')} kata)`;
   })
-  .catch(() => document.getElementById("hasil").innerHTML = "Gagal memuat kamus");
+  .catch(() => {
+    document.getElementById("hasil").innerHTML = "Gagal memuat kamus – cek koneksi";
+  });
 
-// JAM + auto reload hari baru
 let hariSebelumnya = null;
 function updateJam() {
   const now = new Date();
@@ -208,10 +346,15 @@ function updateJam() {
 setInterval(updateJam, 1000);
 updateJam();
 
-// Fungsi utama
-function input() { return document.getElementById("input").value.toLowerCase().trim(); }
-function getMinLen() { return parseInt(document.getElementById("minLen").value); }
-function getMaxLen() { return parseInt(document.getElementById("maxLen").value); }
+function showVerified() {
+  const toast = document.getElementById("toast");
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function getInput() { return document.getElementById("input").value.toLowerCase().trim(); }
+function getMinLen() { return parseInt(document.getElementById("minLen").value) || 2; }
+function getMaxLen() { return parseInt(document.getElementById("maxLen").value) || 16; }
 
 function highlightMatch(word, query) {
   if (!query || !document.getElementById("highlightHuruf").checked) return word;
@@ -223,21 +366,32 @@ function highlightMatch(word, query) {
 function tampil(data) {
   const el = document.getElementById("hasil");
   let filtered = [...new Set(data)].filter(w => w.length >= getMinLen() && w.length <= getMaxLen());
-  if (document.getElementById("favoritOnly").checked) filtered = filtered.filter(w => favorites.includes(w));
+  if (document.getElementById("favoritOnly").checked) {
+    filtered = filtered.filter(w => favorites.includes(w));
+  }
   if (!filtered.length) {
-    el.innerHTML = "Tidak ada kata ditemukan";
+    el.innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777; width:100%; font-size:15px;'>Tidak ada kata yang cocok 😔<br>Coba pola lain atau matikan filter</div>";
     document.getElementById("stats").innerHTML = "";
     return;
   }
+
   filtered.sort((a,b) => b.length - a.length || a.localeCompare(b));
   const best = filtered[0];
-  let html = `<div class='counter'>${filtered.length} kata</div>`;
-  filtered.slice(0,2000).forEach(k => {
-    const cls = k === best ? 'best' : '';
-    const star = favorites.includes(k) ? ' fav' : '';
-    html += `<span class="kata \( {cls} \){star}" onclick="navigator.clipboard.writeText('\( {k}');this.style.background='#22c55e';setTimeout(()=>this.style.background='',500)" ondblclick="toggleFav(' \){k}',this)">${highlightMatch(k, input())}</span>`;
+  let html = `<div class="counter">${filtered.length.toLocaleString('id-ID')} kata ditemukan</div>`;
+  
+  filtered.slice(0, 2500).forEach(k => {
+    const isBest = k === best ? ' best' : '';
+    const isFav = favorites.includes(k) ? ' fav' : '';
+    html += `
+      <div class="kata\( {isBest} \){isFav}" 
+           onclick="navigator.clipboard.writeText('${k}');this.style.background='#404040';setTimeout(()=>this.style.background='',500)"
+           ondblclick="toggleFav('${k}',this)">
+        ${highlightMatch(k, getInput())}
+      </div>`;
   });
+  
   el.innerHTML = html;
+
   const avg = filtered.length ? (filtered.reduce((s,w)=>s+w.length,0)/filtered.length).toFixed(1) : 0;
   document.getElementById("stats").innerHTML = `Rata-rata panjang: ${avg} huruf`;
 }
@@ -254,8 +408,11 @@ function toggleFav(kata, el) {
 }
 
 function cari(mode) {
-  const k = input();
-  if (!k) return;
+  const k = getInput();
+  if (!k) {
+    document.getElementById("hasil").innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777;'>Masukkan pola atau kata dulu ya...</div>";
+    return;
+  }
   let res = kamus;
   if (mode === 'depan') res = res.filter(x => x.startsWith(k));
   else if (mode === 'belakang') res = res.filter(x => x.endsWith(k));
@@ -264,31 +421,32 @@ function cari(mode) {
 }
 
 function cariAnagram() {
-  let k = input().replace(/[^a-z]/g,'');
-  if (k.length < 3) return document.getElementById("hasil").innerHTML = "Minimal 3 huruf";
+  let k = getInput().replace(/[^a-z]/g,'');
+  if (k.length < 3) {
+    document.getElementById("hasil").innerHTML = "<div style='text-align:center;padding:40px 20px;color:#777;'>Minimal 3 huruf untuk cari anagram</div>";
+    return;
+  }
   const sorted = k.split('').sort().join('');
   const res = kamus.filter(w => w.length === k.length && w.split('').sort().join('') === sorted);
   tampil(res);
 }
 
-// Realtime & saran
 let timeout;
 document.getElementById("input").addEventListener("input", () => {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     if (document.getElementById("realtime").checked) cari('semua');
-  }, 300);
+  }, 280);
 
-  const k = input();
+  const k = getInput();
   if (k.length < 2) {
     document.getElementById("saran").innerHTML = "";
     return;
   }
-  const saranList = kamus.filter(x => x.startsWith(k)).slice(0,8);
-  document.getElementById("saran").innerHTML = saranList.length ? "Saran: " + saranList.join(", ") : "";
+  const saranList = kamus.filter(x => x.startsWith(k)).slice(0,9);
+  document.getElementById("saran").innerHTML = saranList.length ? "Saran awalan: " + saranList.join(" • ") : "";
 });
 
-// Slider & checkbox trigger
 document.getElementById("minLen").addEventListener("input", e => {
   document.getElementById("minVal").textContent = e.target.value;
   if (document.getElementById("realtime").checked) cari('semua');
@@ -303,6 +461,5 @@ document.getElementById("maxLen").addEventListener("input", e => {
   });
 });
 </script>
-
 </body>
 </html>
