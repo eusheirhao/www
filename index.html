@@ -6,11 +6,7 @@
 <title>Pencari Kata Indonesia</title>
 
 <style>
-* {
-  user-select: none;
-  -webkit-user-select: none;
-  box-sizing: border-box;
-}
+* { user-select: none; -webkit-user-select: none; box-sizing: border-box; }
 body {
   font-family: system-ui;
   background: linear-gradient(135deg, #6d28d9, #020617);
@@ -44,102 +40,61 @@ body {
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
-.badge {
+.tutorial-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 15px;
+}
+.tutorial-btn {
+  width: 44px;
+  height: 44px;
+  background: #7c3aed;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: linear-gradient(90deg, #9333ea, #c026d3);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  margin-bottom: 10px;
-  font-weight: 600;
-  width: fit-content;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-.verified {
-  width: 18px;
-  height: 18px;
+.tutorial-btn:hover {
+  transform: scale(1.12);
+  background: #9f7aea;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
 }
-h1 {
-  margin: 0;
-  font-size: 34px;
-  font-weight: 700;
-}
-textarea {
-  width: 100%;
-  height: 90px;
-  margin-top: 18px;
-  border: none;
-  border-radius: 14px;
-  padding: 14px;
-  background: #1e293b;
-  color: white;
-  font-size: 16px;
-  outline: none;
-  user-select: text;
-}
-textarea:focus {
-  box-shadow: 0 0 0 2px #7c3aed;
-}
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: 0.25s;
-}
+.badge { display: flex; align-items: center; gap: 6px; background: linear-gradient(90deg, #9333ea, #c026d3); padding: 6px 14px; border-radius: 20px; font-size: 13px; margin-bottom: 10px; font-weight: 600; width: fit-content; }
+.verified { width: 18px; height: 18px; }
+h1 { margin: 0; font-size: 34px; font-weight: 700; }
+textarea { width: 100%; height: 90px; margin-top: 18px; border: none; border-radius: 14px; padding: 14px; background: #1e293b; color: white; font-size: 16px; outline: none; user-select: text; }
+textarea:focus { box-shadow: 0 0 0 2px #7c3aed; }
+button { width: 100%; padding: 14px; margin-top: 12px; border: none; border-radius: 14px; font-size: 16px; cursor: pointer; font-weight: 700; transition: 0.25s; }
 .btn1 { background: linear-gradient(90deg, #22c55e, #16a34a); }
 .btn2 { background: linear-gradient(90deg, #9333ea, #c026d3); }
 .btn3 { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-button:hover {
-  transform: scale(1.04);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-#saran {
-  margin-top: 10px;
-  font-size: 13px;
-  opacity: 0.85;
-}
-#hasilBox {
-  margin-top: 20px;
-  background: #0f172a;
-  border-radius: 14px;
-  padding: 14px;
-  max-height: 240px;
-  overflow: auto;
-}
-.kata {
-  display: inline-block;
-  background: #020617;
-  padding: 7px 12px;
-  margin: 5px;
-  border-radius: 10px;
-  font-size: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-}
-.kata:hover {
-  background: #7c3aed;
-}
-.counter {
-  margin-bottom: 10px;
-  font-weight: 700;
-  color: #a78bfa;
-}
-.best {
-  background: #22c55e;
-}
+.btn4 { background: linear-gradient(90deg, #f59e0b, #d97706); }
+button:hover { transform: scale(1.04); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); }
+#saran, #stats { margin-top: 10px; font-size: 13px; opacity: 0.85; }
+#hasilBox { margin-top: 20px; background: #0f172a; border-radius: 14px; padding: 14px; max-height: 240px; overflow: auto; }
+.kata { display: inline-block; background: #020617; padding: 7px 12px; margin: 5px; border-radius: 10px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; }
+.kata:hover { background: #7c3aed; }
+.kata.best { background: #22c55e; }
+.highlight { background: #fbbf24; color: #1e293b; border-radius: 3px; padding: 1px 3px; }
+.fav::after { content: "★"; color: #fbbf24; margin-left: 4px; font-size: 12px; }
+.counter { margin-bottom: 10px; font-weight: 700; color: #a78bfa; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; font-size: 13px; align-items: center; }
+.filter-row label { cursor: pointer; }
+input[type="range"] { width: 100px; accent-color: #7c3aed; }
+input[type="checkbox"] { accent-color: #7c3aed; }
+#tutorialModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; justify-content: center; align-items: center; }
+#tutorialContent { background: #0f172a; padding: 24px; border-radius: 16px; max-width: 90%; max-height: 85vh; overflow-y: auto; position: relative; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: #94a3b8; }
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
   <div id="jam">Memuat waktu Indonesia...</div>
 
   <div class="badge">
@@ -154,150 +109,199 @@ button:hover {
 
   <textarea id="input" placeholder="Masukkan teks..."></textarea>
 
-  <button class="btn1" onclick="cariDepan()">Cari dari Depan</button>
-  <button class="btn2" onclick="cariBelakang()">Cari dari Belakang</button>
-  <button class="btn3" onclick="cariSemua()">Cari Semua</button>
+  <div class="filter-row">
+    <label><input type="checkbox" id="realtime" checked> Realtime</label>
+    <label><input type="checkbox" id="highlightHuruf" checked> Highlight</label>
+    <label><input type="checkbox" id="favoritOnly"> Favorit saja</label>
+  </div>
+
+  <div class="filter-row" style="justify-content: space-between;">
+    Panjang: 
+    <input type="range" id="minLen" min="2" max="16" value="3"> <span id="minVal">3</span>
+    —
+    <input type="range" id="maxLen" min="2" max="16" value="16"> <span id="maxVal">16</span>
+  </div>
+
+  <button class="btn1" onclick="cari('depan')">Cari dari Depan</button>
+  <button class="btn2" onclick="cari('belakang')">Cari dari Belakang</button>
+  <button class="btn3" onclick="cari('semua')">Cari Semua</button>
+  <button class="btn4" onclick="cariAnagram()">Cari Anagram</button>
+
+  <div class="tutorial-wrapper">
+    <button class="tutorial-btn" onclick="document.getElementById('tutorialModal').style.display='flex'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+        <path d="M12 16V12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="8" r="1" fill="white"/>
+      </svg>
+    </button>
+  </div>
 
   <div id="saran"></div>
+  <div id="stats"></div>
 
   <div id="hasilBox">
     <div id="hasil">Memuat kamus...</div>
   </div>
+</div>
 
+<!-- Modal Tutorial -->
+<div id="tutorialModal" onclick="if(event.target===this)this.style.display='none'">
+  <div id="tutorialContent">
+    <span class="close-btn" onclick="document.getElementById('tutorialModal').style.display='none'">×</span>
+    <h2>Cara Pakai</h2>
+    <p>Ketik pola → pilih tombol atau aktifkan Realtime.</p>
+    <ul style="padding-left: 20px; line-height: 1.5; font-size: 14px;">
+      <li><b>Dari Depan</b>: awalan (kreat → kreatif...)</li>
+      <li><b>Dari Belakang</b>: akhiran (if → aktif, pasif...)</li>
+      <li><b>Cari Semua</b>: mengandung huruf</li>
+      <li><b>Anagram</b>: huruf sama & jumlah sama</li>
+      <li><b>Highlight</b>: huruf cocok kuning</li>
+      <li><b>Favorit</b>: double-click → ★ (simpan)</li>
+      <li>Slider: batasi panjang kata</li>
+      <li>Klik kata: copy</li>
+    </ul>
+    <p style="margin-top: 16px; font-size: 14px;">Selamat mencari! 🚀</p>
+  </div>
 </div>
 
 <script>
-
 const kataTambahan = [
-  "generatif", "ilustratif", "imitatif", "imperatif", "implikatif", "inovatif", "instruktif", "integratif", "intensif", "interaktif", "interpretatif", "intuitif", "inventif", "investigatif", "justifikatif", "kognitif", "komparatif", "komunikatif", "konfirmatif", "konotatif", "konstruktif", "konsultatif", "konsumtif", "kreatif", "kualitatif", "kuantitatif", "legislatif", "lokatif", "manipulatif", "naratif",
-  "objektif", "operatif", "partisipatif", "pasif", "persuasif", "prediktif", "preventif", "produktif", "progresif", "prohibitif", "protektif", "provokatif", "reaktif", "reflektif", "regulatif", "relatif", "representatif", "reproduktif", "restriktif", "selektif", "sensitif", "solutif", "spesifik", "subjektif", "substantif", "sugestif", "suportif", "transformatif", "informatif", "kolektif",
-  "aktif", "adaptif", "adiktif", "administratif", "afektif", "agresif", "alternatif", "argumentatif", "asosiatif", "atraktif", "autoritatif", "deduktif", "definitif", "deformatif", "demonstratif", "deskriptif", "detektif", "direktif", "distributif", "edukatif", "efektif", "ekspansif", "ekspresif", "eksploratif", "eksploitatif", "ekstensif", "evaluatif", "evokatif", "fiktif", "formulatif",
-  "kualifikatif", "konservatif", "konseptual", "kontradiktif", "korelatif", "kritis", "kuratif", "limitatif", "logaritmik", "magnetif", "manifestif", "modifikatif", "motivatif", "negatif", "normatif", "oklusif", "operasional", "optatif", "organisatif", "perfektif", "perseptif", "positif", "preskriptif", "presipitatif", "proaktif", "prospektif", "purifikatif", "realistif", "reduktif", "refleksif", "reformatif", "regresif", "relaksatif", "repetitif", "respektif", "restoratif", "retrospektif", "revisif", "simulatif", "spekulatif", "statif", "strategif", "subversif", "suksesif", "superlatif", "supresif", "sistematif", "tentatif", "transitif", "verifikatif", "vokalif", "akomodatif", "aplikatif", "asertif", "autentikatif", "cooperatif", "defensif", "destruktif", "difusif", "disruptif", "eksklusif", "ekstensif", "emulsif", "enklusif", "evasif", "expansif", "fakultatif", "fertilif", "fruktif", "imperfektif", "impressif", "indikatif", "infinitif", "inhibitif", "instingtif", "interogatif", "introspektif", "konjugatif", "konklusif", "konstitutif", "konversif", "korosif", "kreatif", "kualitatif",
-  "xenon", "xantat", "xantenda", "xantofil", "xenia", "xenofili", "xenofobia", "xenoglosia", "xenograf", "xenokrasi", "xenolit", "xenomania", "xerofil", "xeroftalmia", "xerografi", "xerosis", "xifoid", "xilem", "xilena", "xilosa", "xilofon", "xilograf", "xilografi", "xiloid", "xiloidina", "xilol", "xilologi", "xilonit", "xilos", "xantena", "xerofit", "x-ray", "xenograf", "xantofil", "xeroderma",
-  "nasional", "internasional", "regional", "lokal", "global", "digital", "virtual", "fisikal", "mental", "emosional", "sosial", "kultural", "tradisional", "modern", "klasikal", "teknikal", "medis", "klinis", "patologis", "simetris", "asimetri", "organik", "inorganik", "atomik", "molekuler", "biologis", "psikologis", "sosiologis", "ekonomis", "historis", "geografis", "astronomis", "matematis", "fisik", "kimiawi", "biokimia", "genetik", "evolusioner", "filosofis", "etis", "moralis", "estetis", "praktis", "teoritis", "empiris", "analitis", "sintetis", "dialektis", "heuristik", "intuitif", "logis", "metodis", "statistik", "dinamis", "statis", "kronologis", "hierarkis", "sistematis"
+  "adaptif", "adiktif", "administratif", "afektif", "agresif", "aktif", "alternatif", "argumentatif", "asosiatif", "atraktif",
+  "autoritatif", "deduktif", "definitif", "deformatif", "demonstratif", "deskriptif", "detektif", "direktif", "distributif", "edukatif",
+  "efektif", "ekspansif", "ekspresif", "eksploratif", "eksploitatif", "ekstensif", "evaluatif", "evokatif", "fiktif", "formulatif",
+  "generatif", "ilustratif", "imitatif", "imperatif", "implikatif", "informatif", "inovatif", "instruktif", "integratif", "intensif",
+  "interaktif", "interpretatif", "intuitif", "inventif", "investigatif", "justifikatif", "kognitif", "kolektif", "komparatif", "komunikatif",
+  "konfirmatif", "konotatif", "konstruktif", "konsultatif", "konsumtif", "kreatif", "kualitatif", "kuantitatif", "legislatif", "lokatif",
+  "manipulatif", "naratif", "objektif", "operatif", "partisipatif", "pasif", "persuasif", "prediktif", "preventif", "produktif",
+  "progresif", "prohibitif", "protektif", "provokatif", "reaktif", "reflektif", "regulatif", "relatif", "representatif", "reproduktif",
+  "restriktif", "selektif", "sensitif", "solutif", "spesifik", "subjektif", "substantif", "sugestif", "suportif", "transformatif",
+  "xantat", "xantenda", "xantofil", "xenia", "xenofili", "xenofobia", "xenoglosia", "xenokrasi", "xenolit", "xenomania",
+  "xenon", "xenongraf", "xerofil", "xeroftalmia", "xerografi", "xerosis", "xifoid", "xilem", "xilena", "xilosa",
+  "xilofon", "xilograf", "xilografi", "xiloid", "xiloidina", "xilol", "xilologi", "xilonit", "xilos"
 ].map(w => w.toLowerCase());
 
 let kamus = [];
+let favorites = JSON.parse(localStorage.getItem("favKata") || "[]");
 
 fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/id/id_50k.txt")
   .then(res => res.text())
   .then(data => {
-    kamus = data
-      .split("\n")
+    kamus = data.split("\n")
       .map(x => x.split(" ")[0].toLowerCase())
       .filter(k => /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
-
     kamus = [...new Set([...kataTambahan, ...kamus])];
-
     document.getElementById("hasil").innerHTML = "Kamus siap (" + kamus.length + " kata)";
   })
-  .catch(err => {
-    document.getElementById("hasil").innerHTML = "Gagal memuat kamus";
-  });
+  .catch(() => document.getElementById("hasil").innerHTML = "Gagal memuat kamus");
 
-// === BAGIAN JAM REAL-TIME + AUTO RELOAD SAAT GANTI HARI ===
+// JAM + auto reload hari baru
 let hariSebelumnya = null;
-
 function updateJam() {
   const now = new Date();
-  const options = {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  };
-  const formatter = new Intl.DateTimeFormat('id-ID', options);
-  let waktu = formatter.format(now) + " WIB";
-
-  document.getElementById("jam").innerHTML = waktu;
-
-  // Cek apakah hari sudah berganti
-  const hariSekarang = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
-  
-  if (hariSebelumnya !== null && hariSebelumnya !== hariSekarang) {
-    // Hari sudah berganti → reload halaman otomatis
-    console.log("Hari berganti! Reload halaman...");
-    window.location.reload();
-  }
-  
-  hariSebelumnya = hariSekarang;
+  const opt = { timeZone: 'Asia/Jakarta', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+  document.getElementById("jam").innerHTML = new Intl.DateTimeFormat('id-ID', opt).format(now) + " WIB";
+  const hari = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
+  if (hariSebelumnya && hariSebelumnya !== hari) window.location.reload();
+  hariSebelumnya = hari;
 }
-
-// Jalankan pertama kali + setiap detik
 setInterval(updateJam, 1000);
 updateJam();
 
-function input() {
-  return document.getElementById("input").value.toLowerCase().trim();
+// Fungsi utama
+function input() { return document.getElementById("input").value.toLowerCase().trim(); }
+function getMinLen() { return parseInt(document.getElementById("minLen").value); }
+function getMaxLen() { return parseInt(document.getElementById("maxLen").value); }
+
+function highlightMatch(word, query) {
+  if (!query || !document.getElementById("highlightHuruf").checked) return word;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped.split('').join('|')})`, 'gi');
+  return word.replace(regex, '<span class="highlight">$1</span>');
 }
 
 function tampil(data) {
-  let hasil = document.getElementById("hasil");
-
-  const uniqueData = [...new Set(data)];
-
-  if (uniqueData.length === 0) {
-    hasil.innerHTML = "Tidak ada kata ditemukan";
+  const el = document.getElementById("hasil");
+  let filtered = [...new Set(data)].filter(w => w.length >= getMinLen() && w.length <= getMaxLen());
+  if (document.getElementById("favoritOnly").checked) filtered = filtered.filter(w => favorites.includes(w));
+  if (!filtered.length) {
+    el.innerHTML = "Tidak ada kata ditemukan";
+    document.getElementById("stats").innerHTML = "";
     return;
   }
-
-  uniqueData.sort((a, b) => b.length - a.length || a.localeCompare(b));
-
-  let terbaik = uniqueData[0];
-
-  let html = "<div class='counter'>" + uniqueData.length + " kata ditemukan (duplikat sudah dihapus)</div>";
-
-  uniqueData.slice(0, 2000).forEach(k => {
-    if (k === terbaik) {
-      html += "<span class='kata best' onclick='copyKata(this)'>" + k + "</span>";
-    } else {
-      html += "<span class='kata' onclick='copyKata(this)'>" + k + "</span>";
-    }
+  filtered.sort((a,b) => b.length - a.length || a.localeCompare(b));
+  const best = filtered[0];
+  let html = `<div class='counter'>${filtered.length} kata</div>`;
+  filtered.slice(0,2000).forEach(k => {
+    const cls = k === best ? 'best' : '';
+    const star = favorites.includes(k) ? ' fav' : '';
+    html += `<span class="kata \( {cls} \){star}" onclick="navigator.clipboard.writeText('\( {k}');this.style.background='#22c55e';setTimeout(()=>this.style.background='',500)" ondblclick="toggleFav(' \){k}',this)">${highlightMatch(k, input())}</span>`;
   });
-
-  hasil.innerHTML = html;
+  el.innerHTML = html;
+  const avg = filtered.length ? (filtered.reduce((s,w)=>s+w.length,0)/filtered.length).toFixed(1) : 0;
+  document.getElementById("stats").innerHTML = `Rata-rata panjang: ${avg} huruf`;
 }
 
-function copyKata(el) {
-  navigator.clipboard.writeText(el.innerText);
-  const originalBg = el.style.background;
-  el.style.background = "#22c55e";
-  setTimeout(() => { el.style.background = originalBg; }, 500);
+function toggleFav(kata, el) {
+  if (favorites.includes(kata)) {
+    favorites = favorites.filter(f => f !== kata);
+    el.classList.remove("fav");
+  } else {
+    favorites.push(kata);
+    el.classList.add("fav");
+  }
+  localStorage.setItem("favKata", JSON.stringify(favorites));
 }
 
-function cariDepan() {
-  let k = input();
+function cari(mode) {
+  const k = input();
   if (!k) return;
-  tampil(kamus.filter(x => x.startsWith(k)));
+  let res = kamus;
+  if (mode === 'depan') res = res.filter(x => x.startsWith(k));
+  else if (mode === 'belakang') res = res.filter(x => x.endsWith(k));
+  else res = res.filter(x => x.includes(k));
+  tampil(res);
 }
 
-function cariBelakang() {
-  let k = input();
-  if (!k) return;
-  tampil(kamus.filter(x => x.endsWith(k)));
+function cariAnagram() {
+  let k = input().replace(/[^a-z]/g,'');
+  if (k.length < 3) return document.getElementById("hasil").innerHTML = "Minimal 3 huruf";
+  const sorted = k.split('').sort().join('');
+  const res = kamus.filter(w => w.length === k.length && w.split('').sort().join('') === sorted);
+  tampil(res);
 }
 
-function cariSemua() {
-  let k = input();
-  if (!k) return;
-  tampil(kamus.filter(x => x.includes(k)));
-}
-
+// Realtime & saran
+let timeout;
 document.getElementById("input").addEventListener("input", () => {
-  let k = input();
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    if (document.getElementById("realtime").checked) cari('semua');
+  }, 300);
+
+  const k = input();
   if (k.length < 2) {
     document.getElementById("saran").innerHTML = "";
     return;
   }
-
-  let saran = kamus.filter(x => x.startsWith(k)).slice(0, 10);
-  document.getElementById("saran").innerHTML = "Saran: " + (saran.length ? saran.join(", ") : "—");
+  const saranList = kamus.filter(x => x.startsWith(k)).slice(0,8);
+  document.getElementById("saran").innerHTML = saranList.length ? "Saran: " + saranList.join(", ") : "";
 });
 
+// Slider & checkbox trigger
+document.getElementById("minLen").addEventListener("input", e => {
+  document.getElementById("minVal").textContent = e.target.value;
+  if (document.getElementById("realtime").checked) cari('semua');
+});
+document.getElementById("maxLen").addEventListener("input", e => {
+  document.getElementById("maxVal").textContent = e.target.value;
+  if (document.getElementById("realtime").checked) cari('semua');
+});
+["realtime", "favoritOnly", "highlightHuruf"].forEach(id => {
+  document.getElementById(id).addEventListener("change", () => {
+    if (document.getElementById("realtime").checked) cari('semua');
+  });
+});
 </script>
 
 </body>
