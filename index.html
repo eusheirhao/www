@@ -1,375 +1,547 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pencari Kata Indonesia</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Sandbox Builder live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <style>
+        body, html { margin: 0; padding: 0; overflow: hidden; background-color: #020617; font-family: 'Inter', sans-serif; }
+        canvas { display: block; }
+        
+        .glass {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(34, 211, 238, 0.15);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8);
+        }
 
-<style>
-/* MAINTENANCE SCREEN */
-#maintenance {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0a0a0a;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-  transition: opacity 0.6s ease;
-}
+        #toast {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
 
-.maintenance-box {
-  background: #111;
-  padding: 40px;
-  border-radius: 16px;
-  border: 1px solid #333;
-  text-align: center;
-  color: #fff;
-  max-width: 90%;
-}
+        #video-container {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            width: 180px;
+            height: 135px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            box-shadow: 0 15px 20px -5px rgba(0,0,0,0.6);
+            z-index: 50;
+        }
+        #webcam-video, #guidance-canvas {
+            position: absolute;
+            width: 100%; height: 100%;
+            transform: scaleX(-1);
+            object-fit: cover;
+        }
 
-#maintenanceTime {
-  margin-top: 10px;
-  color: #aaa;
-  font-size: 14px;
-}
+        #tool-bar {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 60;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 95%;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 12px;
+            border-radius: 20px;
+        }
 
-/* STYLE UTAMA */
-* { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; }
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #0a0a0a;
-  color: #e0e0e0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px 10px;
-}
-.container {
-  width: 100%;
-  max-width: 540px;
-  backdrop-filter: blur(12px);
-  background: rgba(18,18,18,0.96);
-  padding: 28px 24px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.95);
-  border: 1px solid #2a2a2a;
-  position: relative;
-}
-#jam {
-  position: absolute;
-  top: 14px; right: 18px;
-  font-size: 12px;
-  color: #888;
-  background: rgba(30,30,30,0.8);
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-/* sisanya style sama seperti sebelumnya */
-.badge { display:inline-flex; align-items:center; gap:8px; background:#1c1c1c; padding:6px 14px; border-radius:999px; font-size:13px; margin-bottom:16px; font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.2s; text-decoration:none; color:#e0e0e0; }
-.badge:hover { background:#2c2c2c; transform:scale(1.03); }
-.verified { width:18px; height:18px; }
-h1 { font-size:32px; font-weight:700; color:#f5f5f5; margin-bottom:16px; text-align:center; }
-textarea { width:100%; height:100px; margin:16px 0 14px; border:1px solid #2e2e2e; border-radius:12px; padding:14px; background:#0f0f0f; color:#f0f0f0; font-size:15.5px; outline:none; resize:none; line-height:1.5; }
-textarea:focus { border-color:#4a4a4a; box-shadow:0 0 0 2.5px rgba(80,80,80,0.5); }
-button { width:100%; padding:14px; margin:8px 0; border:none; border-radius:12px; font-size:15.5px; cursor:pointer; font-weight:600; transition:all 0.22s; color:#fff; }
-.btn1 { background:#3a3a3a; }
-.btn2 { background:#4a4a4a; }
-.btn3 { background:#2a2a2a; }
-.btn4 { background:#5a5a5a; }
-button:hover { filter:brightness(1.25); transform:translateY(-2px); }
-#saran, #stats { margin:10px 0; font-size:13.5px; color:#bbb; text-align:center; line-height:1.4; }
-#hasilBox { margin-top:20px; background:#0d0d0d; border:1px solid #222; border-radius:12px; padding:16px 14px; max-height:380px; overflow-y:auto; scroll-behavior:smooth; }
-#hasil { display:flex; flex-wrap:wrap; gap:10px 12px; }
-.kata { background:#1a1a1a; padding:10px 16px; border-radius:10px; font-size:14.5px; border:1px solid #2f2f2f; cursor:pointer; color:#e0e0e0; transition:all 0.18s ease; box-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; flex:0 0 auto; max-width:100%; }
-.kata:hover { background:#2a2a2a; border-color:#505050; transform:scale(1.04); box-shadow:0 5px 14px rgba(0,0,0,0.55); }
-.kata.best { background:#404040; color:#ffffff; font-weight:600; border-color:#707070; }
-.highlight { background:#707070; color:#fff; padding:2px 5px; border-radius:4px; }
-.fav::after { content:"★"; color:#ccc; margin-left:7px; font-size:12px; }
-.counter { margin:0 0 14px; font-weight:600; color:#999; font-size:14.5px; text-align:center; width:100%; }
-.filter-row { display:flex; flex-wrap:wrap; gap:16px; margin:14px 0; font-size:14px; color:#ccc; justify-content:center; }
-.filter-row label { cursor:pointer; }
-input[type="range"] { accent-color:#888; width:110px; }
-input[type="checkbox"] { accent-color:#999; }
-#tutorialModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; justify-content:center; align-items:center; }
-#tutorialContent { background:#161616; padding:24px; border-radius:16px; max-width:90%; max-height:88vh; overflow-y:auto; border:1px solid #333; color:#ddd; position:relative; }
-.close-btn { position:absolute; top:10px; right:16px; font-size:36px; cursor:pointer; color:#777; }
-#toast { position:fixed; bottom:60px; left:50%; transform:translateX(-50%); background:#1e1e1e; color:#1d9bf0; padding:12px 28px; border-radius:12px; font-weight:600; font-size:15px; opacity:0; pointer-events:none; transition:all 0.4s ease; z-index:2000; border:1px solid #404040; }
-#toast.show { opacity:1; transform:translateX(-50%) translateY(-25px); }
-</style>
+        .tool-btn {
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .tool-btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+        }
+
+        @media (max-width: 640px) {
+            #tool-bar {
+                top: 8px;
+                right: 8px;
+                padding: 8px;
+                gap: 8px;
+                overflow-x: auto;
+            }
+            .tool-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                min-width: 85px;
+            }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
 </head>
 <body>
 
-<div id="maintenance">
-  <div class="maintenance-box">
-    <h1>Segera Hadir 🚧</h1>
-    <div id="maintenanceTime">Memuat waktu...</div>
-  </div>
-</div>
+    <div id="canvas-container" class="absolute inset-0"></div>
 
-<div class="container" id="mainContent" style="opacity:0; transition:opacity 0.8s ease;">
-  <div id="jam">Memuat waktu...</div>
+    <div id="ui-layer" class="absolute inset-0 pointer-events-none p-4 md:p-8">
 
-  <a href="https://www.tiktok.com/@kholiddzz" target="_blank" class="badge" onclick="showVerified()">
-    @Kholiddzz
-    <svg class="verified" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
-      <path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
-    </svg>
-  </a>
+        <div class="flex justify-between items-start">
+            <div class="flex flex-col gap-1 pointer-events-auto">
+                <h1 class="text-white text-2xl md:text-3xl font-black tracking-tighter italic uppercase">Sandbox <span class="text-blue-500">v3</span></h1>
+                <div id="status-indicator" class="glass inline-flex items-center px-4 py-2 rounded-full self-start shadow-lg">
+                    <span id="status-dot" class="w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse shadow-[0_0_10px_#eab308]"></span>
+                    <span id="status-text" class="text-sm font-bold uppercase tracking-widest text-slate-200">Searching...</span>
+                </div>
+            </div>
 
-  <h1>Pencari Kata</h1>
+            <div id="toast" class="glass px-6 py-3 rounded-2xl shadow-2xl pointer-events-auto">
+                <p class="text-blue-400 text-sm font-bold tracking-wide uppercase">Progress Auto-Saved</p>
+            </div>
+        </div>
 
-  <textarea id="input" placeholder="Ketik pola / kata di sini..."></textarea>
+        <!-- TOOL-BAR UPGRADED – CAPSULE UDAH DIKERAT MATI -->
+        <div id="tool-bar" class="glass">
 
-  <div class="filter-row">
-    <label><input type="checkbox" id="realtime" checked> Realtime</label>
-    <label><input type="checkbox" id="highlightHuruf" checked> Highlight</label>
-    <label><input type="checkbox" id="favoritOnly"> Favorit saja</label>
-  </div>
+            <button onclick="spawnObject('box', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-blue-700/90 text-white border border-blue-500/30 hover:border-blue-400">
+                <span>Block</span>
+                <div class="w-5 h-5 bg-blue-400 rounded-lg group-hover:bg-white shadow-[0_0_12px_#3b82f6]"></div>
+            </button>
 
-  <div class="filter-row" style="justify-content:space-between; gap:12px; flex-wrap:nowrap;">
-    Panjang: 
-    <input type="range" id="minLen" min="2" max="16" value="3"> <span id="minVal">3</span>
-    —
-    <input type="range" id="maxLen" min="2" max="16" value="16"> <span id="maxVal">16</span>
-  </div>
+            <button onclick="spawnObject('cylinder', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-purple-700/90 text-white border border-purple-500/30 hover:border-purple-400">
+                <span>Pillar</span>
+                <div class="w-5 h-5 bg-purple-400 rounded-full group-hover:bg-white shadow-[0_0_12px_#a855f7]"></div>
+            </button>
 
-  <button class="btn1" onclick="cari('depan')">Cari dari Depan</button>
-  <button class="btn2" onclick="cari('belakang')">Cari dari Belakang</button>
-  <button class="btn3" onclick="cari('semua')">Cari Semua</button>
-  <button class="btn4" onclick="cariAnagram()">Cari Anagram</button>
+            <button onclick="spawnObject('beam', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-orange-700/90 text-white border border-orange-500/30 hover:border-orange-400">
+                <span>Beam</span>
+                <div class="w-7 h-4 bg-orange-400 rounded group-hover:bg-white shadow-[0_0_12px_#f97316]"></div>
+            </button>
 
-  <div class="tutorial-wrapper" style="margin:20px 0; text-align:center;">
-    <button onclick="document.getElementById('tutorialModal').style.display='flex'">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.2">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 16V12"/>
-        <circle cx="12" cy="8" r="1" fill="#aaa"/>
-      </svg>
-    </button>
-  </div>
+            <button onclick="spawnObject('sphere', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-red-700/90 text-white border border-red-500/30 hover:border-red-400">
+                <span>Sphere</span>
+                <div class="w-5 h-5 bg-red-500 rounded-full group-hover:bg-white shadow-[0_0_12px_#ef4444]"></div>
+            </button>
 
-  <div id="saran"></div>
-  <div id="stats"></div>
+            <button onclick="spawnObject('cone', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-green-700/90 text-white border border-green-500/30 hover:border-green-400">
+                <span>Cone</span>
+                <div class="w-5 h-5 bg-green-500 rounded group-hover:bg-white shadow-[0_0_12px_#10b981]"></div>
+            </button>
 
-  <div id="hasilBox">
-    <div id="hasil">Memuat kamus...</div>
-  </div>
-</div>
+            <button onclick="spawnObject('torus', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-yellow-700/90 text-white border border-yellow-500/30 hover:border-yellow-400">
+                <span>Torus</span>
+                <div class="w-5 h-5 bg-yellow-400 rounded-full group-hover:bg-white shadow-[0_0_12px_#eab308]"></div>
+            </button>
 
-<div id="toast">Terverifikasi</div>
+            <button onclick="spawnObject('pyramid', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-gray-700/90 text-white border border-gray-500/30 hover:border-gray-400">
+                <span>Pyramid</span>
+                <div class="w-5 h-5 bg-gray-400 rounded group-hover:bg-white shadow-[0_0_12px_#9ca3af]"></div>
+            </button>
 
-<div id="tutorialModal" onclick="if(event.target===this)this.style.display='none'">
-  <div id="tutorialContent">
-    <span class="close-btn" onclick="document.getElementById('tutorialModal').style.display='none'">×</span>
-    <h2>Cara Pakai</h2>
-    <p>Ketik pola → pilih tombol atau biarkan Realtime aktif.</p>
-    <ul style="padding-left:20px; font-size:14px; line-height:1.6; margin:12px 0;">
-      <li><b>Dari Depan</b> → awalan kata</li>
-      <li><b>Dari Belakang</b> → akhiran kata</li>
-      <li><b>Cari Semua</b> → mengandung huruf/pola</li>
-      <li><b>Anagram</b> → huruf sama (acak)</li>
-      <li>Double-click kata → tambah/hapus favorit ★</li>
-      <li>Klik kata → salin ke clipboard</li>
-    </ul>
-    <p style="margin-top:20px; text-align:center;">Selamat mencoba! ✦</p>
-  </div>
-</div>
+            <button onclick="spawnObject('octahedron', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-violet-700/90 text-white border border-violet-500/30 hover:border-violet-400">
+                <span>Octa</span>
+                <div class="w-5 h-5 bg-violet-500 rounded group-hover:bg-white shadow-[0_0_12px_#8b5cf6]"></div>
+            </button>
 
-<script>
-// MAINTENANCE (kata "Website aktif dalam" sudah dihapus)
-const maintenanceEnd = new Date(2028, 2, 12, 22, 0, 0).getTime(); // 22:00 WIB, 12 Maret 2026
+            <button onclick="spawnObject('dodecahedron', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-amber-700/90 text-white border border-amber-500/30 hover:border-amber-400">
+                <span>Dodeca</span>
+                <div class="w-5 h-5 bg-amber-400 rounded group-hover:bg-white shadow-[0_0_12px_#d97706]"></div>
+            </button>
 
-function updateMaintenance() {
-  const now = new Date().getTime();
-  const diff = maintenanceEnd - now;
+            <button onclick="spawnObject('icosahedron', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-cyan-700/90 text-white border border-cyan-500/30 hover:border-cyan-400">
+                <span>Icosa</span>
+                <div class="w-5 h-5 bg-cyan-400 rounded group-hover:bg-white shadow-[0_0_12px_#06b6d4]"></div>
+            </button>
 
-  if (diff <= 0) {
-    const maint = document.getElementById("maintenance");
-    const mainCont = document.getElementById("mainContent");
-    if (maint && mainCont) {
-      maint.style.opacity = "0";
-      setTimeout(() => {
-        maint.style.display = "none";
-        mainCont.style.opacity = "1";
-      }, 600);
-    }
-    return;
-  }
+            <button onclick="clearAll()" class="tool-btn group bg-red-950/80 hover:bg-red-800/90 text-red-200 hover:text-white border border-red-700/50 hover:border-red-500 font-extrabold uppercase tracking-wider shadow-[0_0_15px_rgba(239,68,68,0.4)] hover:shadow-[0_0_30px_rgba(239,68,68,0.7)] animate-pulse-slow">
+                Reset All
+            </button>
 
-  const menit = Math.floor(diff / 60000);
-  const detik = Math.floor((diff % 60000) / 1000);
+            <!-- KHOLIDDZZ SIGNATURE TETEP SADIS DI UJUNG -->
+            <a href="https://www.tiktok.com/@kholiddzz?_r=1&_t=ZS-94jCH4I38Td" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="tool-btn group flex items-center gap-3 bg-gradient-to-r from-cyan-900/70 to-blue-900/70 hover:from-cyan-700/90 hover:to-blue-700/90 text-cyan-300 hover:text-white border border-cyan-400/50 hover:border-cyan-300 font-bold italic tracking-widest text-lg shadow-[0_0_20px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.9)] animate-pulse-slow">
+                <span>kholiddzz</span>
+                <span class="text-xl group-hover:scale-125 transition-transform"></span>
+            </a>
+        </div>
 
-  document.getElementById("maintenanceTime").innerHTML = 
-    menit + " menit " + detik + " detik";
-}
+    </div>
 
-setInterval(updateMaintenance, 1000);
-updateMaintenance();
+    <div id="loading-screen" class="absolute inset-0 z-50 bg-[#020617] flex flex-col items-center justify-center">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h2 class="text-white text-2xl font-black tracking-widest uppercase">Hello</h2>
+        <p class="text-slate-400 mt-3 text-sm tracking-[0.4em] animate-pulse">Initializing Neural Interface...</p>
+    </div>
 
-// KODE PENCARI KATA (diperbaiki sedikit typo di class kata)
-const kataTambahan = [
-  "adaptif","adiktif","administratif","afektif","agresif","aktif","alternatif","argumentatif","asosiatif","atraktif",
-  "autoritatif","deduktif","definitif","deformatif","demonstratif","deskriptif","detektif","direktif","distributif","edukatif",
-  "efektif","ekspansif","ekspresif","eksploratif","eksploitatif","ekstensif","evaluatif","evokatif","fiktif","formulatif",
-  "generatif","ilustratif","imitatif","imperatif","implikatif","informatif","inovatif","instruktif","integratif","intensif",
-  "interaktif","interpretatif","intuitif","inventif","investigatif","justifikatif","kognitif","kolektif","komparatif","komunikatif",
-  "konfirmatif","konotatif","konstruktif","konsultatif","konsumtif","kreatif","kualitatif","kuantitatif","legislatif","lokatif",
-  "manipulatif","naratif","objektif","operatif","partisipatif","pasif","persuasif","prediktif","preventif","produktif",
-  "progresif","prohibitif","protektif","provokatif","reaktif","reflektif","regulatif","relatif","representatif","reproduktif",
-  "restriktif","selektif","sensitif","solutif","spesifik","subjektif","substantif","sugestif","suportif","transformatif",
-  "xantat","xantenda","xantofil","xenia","xenofili","xenofobia","xenoglosia","xenokrasi","xenolit","xenomania",
-  "xenon","xenongraf","xerofil","xeroftalmia","xerografi","xerosis","xifoid","xilem","xilena","xilosa",
-  "xilofon","xilograf","xilografi","xiloid","xiloidina","xilol","xilologi","xilonit","xilos"
-].map(w=>w.toLowerCase());
+    <div id="video-container">
+        <video id="webcam-video" autoplay playsinline></video>
+        <canvas id="guidance-canvas"></canvas>
+    </div>
 
-let kamus = [];
-let favorites = JSON.parse(localStorage.getItem("favKata") || "[]");
+    <script>
+        const GRAVITY_STRENGTH = 0.08;
+        const PINCH_THRESHOLD = 3.0;
+        const STORAGE_KEY = 'leon_sandbox_data';
+        
+        let scene, camera, renderer, isHandActive = false;
+        let objects = [], handMeshes = [];
+        let grabbedObjects = [null, null];
 
-fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/id/id_50k.txt")
-  .then(res => res.text())
-  .then(data => {
-    kamus = data.split("\n")
-      .map(x => x.split(" ")[0]?.toLowerCase?.())
-      .filter(k => k && /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
-    kamus = [...new Set([...kataTambahan, ...kamus])];
-    document.getElementById("hasil").innerHTML = `Kamus siap (${kamus.length.toLocaleString('id-ID')} kata)`;
-  })
-  .catch(() => {
-    document.getElementById("hasil").innerHTML = "Gagal memuat kamus – cek koneksi";
-  });
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color('#020617');
+            scene.fog = new THREE.Fog('#020617', 30, 90);
 
-let hariSebelumnya = null;
-function updateJam() {
-  const now = new Date();
-  const opt = { timeZone: 'Asia/Jakarta', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
-  document.getElementById("jam").innerHTML = new Intl.DateTimeFormat('id-ID', opt).format(now) + " WIB";
-  const hari = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
-  if (hariSebelumnya && hariSebelumnya !== hari) window.location.reload();
-  hariSebelumnya = hari;
-}
-setInterval(updateJam, 1000);
-updateJam();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 25, 50);
+            camera.lookAt(0, 5, 0);
 
-function showVerified() {
-  const toast = document.getElementById("toast");
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2200);
-}
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-function getInput() { return document.getElementById("input").value.toLowerCase().trim(); }
-function getMinLen() { return parseInt(document.getElementById("minLen").value) || 2; }
-function getMaxLen() { return parseInt(document.getElementById("maxLen").value) || 16; }
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
 
-function highlightMatch(word, query) {
-  if (!query || !document.getElementById("highlightHuruf").checked) return word;
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(`(${escaped.split('').join('|')})`, 'gi');
-  return word.replace(regex, '<span class="highlight">$1</span>');
-}
+            const spotLight = new THREE.PointLight(0x3b82f6, 1, 100);
+            spotLight.position.set(0, 30, 0);
+            scene.add(spotLight);
 
-function tampil(data) {
-  const el = document.getElementById("hasil");
-  let filtered = [...new Set(data)].filter(w => w.length >= getMinLen() && w.length <= getMaxLen());
-  if (document.getElementById("favoritOnly").checked) {
-    filtered = filtered.filter(w => favorites.includes(w));
-  }
-  if (!filtered.length) {
-    el.innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777; width:100%; font-size:15px;'>Tidak ada kata yang cocok 😔<br>Coba pola lain atau matikan filter</div>";
-    document.getElementById("stats").innerHTML = "";
-    return;
-  }
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+            dirLight.position.set(20, 40, 20);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            scene.add(dirLight);
 
-  filtered.sort((a,b) => b.length - a.length || a.localeCompare(b));
-  const best = filtered[0];
-  let html = `<div class="counter">${filtered.length.toLocaleString('id-ID')} kata ditemukan</div>`;
-  
-  filtered.slice(0, 2500).forEach(k => {
-    const isBest = k === best ? ' best' : '';
-    const isFav = favorites.includes(k) ? ' fav' : '';
-    html += `
-      <div class="kata\( {isBest} \){isFav}" 
-           onclick="navigator.clipboard.writeText('${k}');this.style.background='#404040';setTimeout(()=>this.style.background='',500)"
-           ondblclick="toggleFav('${k}',this)">
-        ${highlightMatch(k, getInput())}
-      </div>`;
-  });
-  
-  el.innerHTML = html;
+            const floor = new THREE.Mesh(
+                new THREE.PlaneGeometry(200, 200),
+                new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.9 })
+            );
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
 
-  const avg = filtered.length ? (filtered.reduce((s,w)=>s+w.length,0)/filtered.length).toFixed(1) : 0;
-  document.getElementById("stats").innerHTML = `Rata-rata panjang: ${avg} huruf`;
-}
+            const grid = new THREE.GridHelper(100, 40, '#1e293b', '#0f172a');
+            scene.add(grid);
 
-function toggleFav(kata, el) {
-  if (favorites.includes(kata)) {
-    favorites = favorites.filter(f => f !== kata);
-    el.classList.remove("fav");
-  } else {
-    favorites.push(kata);
-    el.classList.add("fav");
-  }
-  localStorage.setItem("favKata", JSON.stringify(favorites));
-}
+            setupHandVisuals();
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
 
-function cari(mode) {
-  const k = getInput();
-  if (!k) {
-    document.getElementById("hasil").innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777;'>Masukkan pola atau kata dulu ya...</div>";
-    return;
-  }
-  let res = kamus;
-  if (mode === 'depan') res = res.filter(x => x.startsWith(k));
-  else if (mode === 'belakang') res = res.filter(x => x.endsWith(k));
-  else res = res.filter(x => x.includes(k));
-  tampil(res);
-}
+        function setupHandVisuals() {
+            const jointGeom = new THREE.SphereGeometry(0.3, 12, 12);
+            const lineMat = new THREE.LineBasicMaterial({ color: '#0ea5e9', transparent: true, opacity: 0.5 });
 
-function cariAnagram() {
-  let k = getInput().replace(/[^a-z]/g,'');
-  if (k.length < 3) {
-    document.getElementById("hasil").innerHTML = "<div style='text-align:center;padding:40px 20px;color:#777;'>Minimal 3 huruf untuk cari anagram</div>";
-    return;
-  }
-  const sorted = k.split('').sort().join('');
-  const res = kamus.filter(w => w.length === k.length && w.split('').sort().join('') === sorted);
-  tampil(res);
-}
+            for (let h = 0; h < 2; h++) {
+                const joints = [];
+                const lines = [];
+                const connections = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[0,17],[17,18],[18,19],[19,20]];
 
-let timeout;
-document.getElementById("input").addEventListener("input", () => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    if (document.getElementById("realtime").checked) cari('semua');
-  }, 280);
+                const jointMat = new THREE.MeshBasicMaterial({ color: h === 0 ? '#0ea5e9' : '#ff69b4' });
 
-  const k = getInput();
-  if (k.length < 2) {
-    document.getElementById("saran").innerHTML = "";
-    return;
-  }
-  const saranList = kamus.filter(x => x.startsWith(k)).slice(0,9);
-  document.getElementById("saran").innerHTML = saranList.length ? "Saran awalan: " + saranList.join(" • ") : "";
-});
+                for (let i = 0; i < 21; i++) {
+                    const m = new THREE.Mesh(jointGeom, jointMat);
+                    m.visible = false;
+                    scene.add(m);
+                    joints.push(m);
+                }
 
-document.getElementById("minLen").addEventListener("input", e => {
-  document.getElementById("minVal").textContent = e.target.value;
-  if (document.getElementById("realtime").checked) cari('semua');
-});
-document.getElementById("maxLen").addEventListener("input", e => {
-  document.getElementById("maxVal").textContent = e.target.value;
-  if (document.getElementById("realtime").checked) cari('semua');
-});
-["realtime", "favoritOnly", "highlightHuruf"].forEach(id => {
-  document.getElementById(id).addEventListener("change", () => {
-    if (document.getElementById("realtime").checked) cari('semua');
-  });
-});
-</script>
+                connections.forEach(() => {
+                    const g = new THREE.BufferGeometry();
+                    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+                    const l = new THREE.LineSegments(g, lineMat);
+                    l.visible = false;
+                    scene.add(l);
+                    lines.push(l);
+                });
+
+                handMeshes.push({ joints, lines, connections });
+            }
+        }
+
+        function spawnObject(type, x, y, z, isLoad = false) {
+            let geom, color, halfSize = {x: 2, y: 2, z: 2};
+
+            switch(type) {
+                case 'box':
+                    geom = new THREE.BoxGeometry(4,4,4);
+                    color = '#3b82f6';
+                    break;
+                case 'cylinder':
+                    geom = new THREE.CylinderGeometry(2,2,6,32);
+                    color = '#a855f7';
+                    halfSize = {x:2, y:3, z:2};
+                    break;
+                case 'beam':
+                    geom = new THREE.BoxGeometry(10,2,4);
+                    color = '#f97316';
+                    halfSize = {x:5, y:1, z:2};
+                    break;
+                case 'sphere':
+                    geom = new THREE.SphereGeometry(2.5, 32, 32);
+                    color = '#ef4444';
+                    halfSize = {x:2.5, y:2.5, z:2.5};
+                    break;
+                case 'cone':
+                    geom = new THREE.ConeGeometry(3, 8, 32);
+                    color = '#10b981';
+                    halfSize = {x:3, y:4, z:3};
+                    break;
+                case 'torus':
+                    geom = new THREE.TorusGeometry(4, 1.5, 16, 100);
+                    color = '#eab308';
+                    halfSize = {x:5.5, y:1.5, z:5.5};
+                    break;
+                case 'pyramid':
+                    geom = new THREE.ConeGeometry(3, 7, 4, 1);
+                    color = '#1f2937';
+                    halfSize = {x:3, y:3.5, z:3};
+                    break;
+                case 'octahedron':
+                    geom = new THREE.OctahedronGeometry(2.5);
+                    color = '#7c3aed';
+                    halfSize = {x:2.5, y:2.5, z:2.5};
+                    break;
+                case 'dodecahedron':
+                    geom = new THREE.DodecahedronGeometry(2.5);
+                    color = '#d97706';
+                    halfSize = {x:2.5, y:2.5, z:2.5};
+                    break;
+                case 'icosahedron':
+                    geom = new THREE.IcosahedronGeometry(2.5);
+                    color = '#06b6d4';
+                    halfSize = {x:2.5, y:2.5, z:2.5};
+                    break;
+                default:
+                    return;
+            }
+
+            const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color, metalness: 0.2, roughness: 0.1 }));
+            mesh.position.set(x, y, z);
+            mesh.castShadow = mesh.receiveShadow = true;
+            mesh.userData = { 
+                type, 
+                velocity: {y:0}, 
+                isGrabbed: false, 
+                halfSize, 
+                prevPos: mesh.position.clone() 
+            };
+            
+            scene.add(mesh);
+            objects.push(mesh);
+            if(!isLoad) saveData();
+        }
+
+        function updatePhysics() {
+            const ray = new THREE.Raycaster();
+            const down = new THREE.Vector3(0,-1,0);
+
+            objects.forEach(obj => {
+                if(obj.userData.isGrabbed) return;
+                
+                obj.userData.velocity.y -= GRAVITY_STRENGTH;
+                let nextY = obj.position.y + obj.userData.velocity.y;
+                let collided = false;
+
+                if (nextY - obj.userData.halfSize.y < 0) {
+                    obj.position.y = obj.userData.halfSize.y;
+                    obj.userData.velocity.y = 0;
+                    collided = true;
+                }
+
+                const collidables = objects.filter(o => o !== obj);
+                ray.set(new THREE.Vector3(obj.position.x, obj.position.y - obj.userData.halfSize.y + 0.1, obj.position.z), down);
+                const hits = ray.intersectObjects(collidables);
+
+                if(hits.length > 0 && hits[0].distance < Math.abs(obj.userData.velocity.y) + 0.2) {
+                    obj.position.y = hits[0].point.y + obj.userData.halfSize.y;
+                    obj.userData.velocity.y = 0;
+                    collided = true;
+                }
+
+                if(!collided) obj.position.y = nextY;
+            });
+        }
+
+        function handleHands(multiHandLandmarks) {
+            handMeshes.forEach(hand => {
+                hand.joints.forEach(j => j.visible = false);
+                hand.lines.forEach(l => l.visible = false);
+            });
+
+            grabbedObjects.forEach((g, idx) => {
+                if (g && !multiHandLandmarks[idx]) {
+                    g.userData.isGrabbed = false;
+                    grabbedObjects[idx] = null;
+                    saveData();
+                }
+            });
+
+            multiHandLandmarks.forEach((hand, handIndex) => {
+                if (handIndex >= handMeshes.length) return;
+                const handMesh = handMeshes[handIndex];
+
+                const mapX = (x) => (x - 0.5) * -50;
+                const mapY = (y) => (1 - y) * 35;
+                const mapZ = (z) => z * 40;
+
+                hand.forEach((lm, i) => {
+                    handMesh.joints[i].position.set(mapX(lm.x), mapY(lm.y), mapZ(lm.z));
+                    handMesh.joints[i].visible = true;
+                });
+
+                handMesh.connections.forEach((conn, i) => {
+                    const p1 = handMesh.joints[conn[0]].position;
+                    const p2 = handMesh.joints[conn[1]].position;
+                    const pos = handMesh.lines[i].geometry.attributes.position.array;
+                    pos[0]=p1.x; pos[1]=p1.y; pos[2]=p1.z; pos[3]=p2.x; pos[4]=p2.y; pos[5]=p2.z;
+                    handMesh.lines[i].geometry.attributes.position.needsUpdate = true;
+                    handMesh.lines[i].visible = true;
+                });
+
+                const thumb = handMesh.joints[4].position;
+                const index = handMesh.joints[8].position;
+                const pinchDist = thumb.distanceTo(index);
+
+                if (pinchDist < PINCH_THRESHOLD) {
+                    if (!grabbedObjects[handIndex]) {
+                        let minD = 12;
+                        let closest = null;
+                        objects.forEach(o => {
+                            let d = index.distanceTo(o.position);
+                            if (d < minD) {
+                                minD = d;
+                                closest = o;
+                            }
+                        });
+                        if (closest) {
+                            closest.userData.isGrabbed = true;
+                            grabbedObjects[handIndex] = closest;
+                        }
+                    }
+
+                    if (grabbedObjects[handIndex]) {
+                        const target = new THREE.Vector3(index.x, index.y, index.z);
+
+                        if (grabbedObjects[0] === grabbedObjects[1] && grabbedObjects[0]) {
+                            const otherIndex = handIndex === 0 ? 1 : 0;
+                            const otherHandMesh = handMeshes[otherIndex];
+                            const otherPinch = otherHandMesh.joints[8].position;
+                            target.lerp(otherPinch, 0.5);
+                        }
+
+                        grabbedObjects[handIndex].position.lerp(target, 0.4);
+                    }
+                } else if (grabbedObjects[handIndex]) {
+                    grabbedObjects[handIndex].userData.isGrabbed = false;
+                    grabbedObjects[handIndex] = null;
+                    saveData();
+                }
+            });
+        }
+
+        function initMediaPipe() {
+            const hands = new Hands({locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
+            hands.setOptions({ 
+                maxNumHands: 2,
+                modelComplexity: 1, 
+                minDetectionConfidence: 0.7,
+                minTrackingConfidence: 0.5 
+            });
+            hands.onResults((res) => {
+                const ctx = document.getElementById('guidance-canvas').getContext('2d');
+                ctx.clearRect(0,0,320,240);
+
+                if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
+                    updateStatus(true);
+                    handleHands(res.multiHandLandmarks);
+                    document.getElementById('loading-screen').style.display = 'none';
+                } else {
+                    updateStatus(false);
+                    handMeshes.forEach(hand => {
+                        hand.joints.forEach(j => j.visible = false);
+                        hand.lines.forEach(l => l.visible = false);
+                    });
+                    grabbedObjects.forEach((g, i) => {
+                        if (g) {
+                            g.userData.isGrabbed = false;
+                            grabbedObjects[i] = null;
+                        }
+                    });
+                    saveData();
+                }
+            });
+            const cam = new Camera(document.getElementById('webcam-video'), {
+                onFrame: async () => await hands.send({image: document.getElementById('webcam-video')}),
+                width: 320, height: 240
+            });
+            cam.start();
+        }
+
+        function updateStatus(active) {
+            isHandActive = active;
+            const dot = document.getElementById('status-dot');
+            const txt = document.getElementById('status-text');
+            dot.className = active ? "w-3 h-3 rounded-full bg-blue-400 mr-3 shadow-[0_0_12px_#60a5fa]" : "w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse";
+            txt.innerText = active ? "System Active (2 Hands)" : "Searching...";
+            txt.className = active ? "text-sm font-bold uppercase tracking-widest text-blue-400" : "text-sm font-bold uppercase tracking-widest text-slate-400";
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(objects.map(o => ({type: o.userData.type, x: o.position.x, y: o.position.y, z: o.position.z}))));
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function clearAll() { 
+            objects.forEach(o => scene.remove(o)); 
+            objects = []; 
+            grabbedObjects = [null, null];
+            saveData(); 
+        }
+        
+        window.onload = () => {
+            initThreeJS();
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+            data.forEach(d => spawnObject(d.type, d.x, d.y, d.z, true));
+            initMediaPipe();
+            (function anim() { 
+                requestAnimationFrame(anim); 
+                updatePhysics(); 
+                renderer.render(scene, camera); 
+            })();
+        };
+    </script>
 </body>
-    </html>
+  </html>
