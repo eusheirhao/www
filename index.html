@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Sandbox Builder live</title>
+    <title>3D Sandbox Builder v3 - Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -34,8 +34,8 @@
             position: fixed;
             bottom: 16px;
             right: 16px;
-            width: 180px;
-            height: 135px;
+            width: 200px;
+            height: 150px;
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid rgba(56, 189, 248, 0.4);
@@ -62,6 +62,7 @@
             align-items: center;
             padding: 12px;
             border-radius: 20px;
+            pointer-events: auto;
         }
 
         .tool-btn {
@@ -71,6 +72,8 @@
             border-radius: 14px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            pointer-events: auto;
+            cursor: pointer;
         }
 
         .tool-btn:hover {
@@ -85,11 +88,13 @@
                 padding: 8px;
                 gap: 8px;
                 overflow-x: auto;
+                max-width: 98vw;
             }
             .tool-btn {
                 padding: 8px 12px;
                 font-size: 0.8rem;
-                min-width: 85px;
+                min-width: 90px;
+                flex-shrink: 0;
             }
         }
 
@@ -101,7 +106,7 @@
 
     <div id="canvas-container" class="absolute inset-0"></div>
 
-    <div id="ui-layer" class="absolute inset-0 pointer-events-none p-4 md:p-8">
+    <div id="ui-layer" class="absolute inset-0 p-4 md:p-8">
 
         <div class="flex justify-between items-start">
             <div class="flex flex-col gap-1 pointer-events-auto">
@@ -117,9 +122,7 @@
             </div>
         </div>
 
-        <!-- TOOL-BAR UPGRADED – CAPSULE UDAH DIKERAT MATI -->
         <div id="tool-bar" class="glass">
-
             <button onclick="spawnObject('box', 0, 15, 0)" class="tool-btn group flex items-center gap-3 bg-slate-800/70 hover:bg-blue-700/90 text-white border border-blue-500/30 hover:border-blue-400">
                 <span>Block</span>
                 <div class="w-5 h-5 bg-blue-400 rounded-lg group-hover:bg-white shadow-[0_0_12px_#3b82f6]"></div>
@@ -174,13 +177,8 @@
                 Reset All
             </button>
 
-            <!-- KHOLIDDZZ SIGNATURE TETEP SADIS DI UJUNG -->
-            <a href="https://www.tiktok.com/@kholiddzz?_r=1&_t=ZS-94jCH4I38Td" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="tool-btn group flex items-center gap-3 bg-gradient-to-r from-cyan-900/70 to-blue-900/70 hover:from-cyan-700/90 hover:to-blue-700/90 text-cyan-300 hover:text-white border border-cyan-400/50 hover:border-cyan-300 font-bold italic tracking-widest text-lg shadow-[0_0_20px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.9)] animate-pulse-slow">
+            <a href="https://www.tiktok.com/@kholiddzz" target="_blank" rel="noopener noreferrer" class="tool-btn group flex items-center gap-3 bg-gradient-to-r from-cyan-900/70 to-blue-900/70 hover:from-cyan-700/90 hover:to-blue-700/90 text-cyan-300 hover:text-white border border-cyan-400/50 hover:border-cyan-300 font-bold italic tracking-widest text-lg shadow-[0_0_20px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.9)] animate-pulse-slow">
                 <span>kholiddzz</span>
-                <span class="text-xl group-hover:scale-125 transition-transform"></span>
             </a>
         </div>
 
@@ -191,20 +189,20 @@
             <div class="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
-        <h2 class="text-white text-2xl font-black tracking-widest uppercase">Hello</h2>
-        <p class="text-slate-400 mt-3 text-sm tracking-[0.4em] animate-pulse">Initializing Neural Interface...</p>
+        <h2 class="text-white text-2xl font-black tracking-widest uppercase">Loading...</h2>
+        <p class="text-slate-400 mt-3 text-sm tracking-[0.4em] animate-pulse">Accessing camera...</p>
     </div>
 
     <div id="video-container">
-        <video id="webcam-video" autoplay playsinline></video>
+        <video id="webcam-video" autoplay playsinline muted></video>
         <canvas id="guidance-canvas"></canvas>
     </div>
 
     <script>
         const GRAVITY_STRENGTH = 0.08;
         const PINCH_THRESHOLD = 3.0;
-        const STORAGE_KEY = 'leon_sandbox_data';
-        
+        const STORAGE_KEY = 'sandbox_v3_data';
+
         let scene, camera, renderer, isHandActive = false;
         let objects = [], handMeshes = [];
         let grabbedObjects = [null, null];
@@ -222,35 +220,24 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.setPixelRatio(window.devicePixelRatio);
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-
-            const spotLight = new THREE.PointLight(0x3b82f6, 1, 100);
-            spotLight.position.set(0, 30, 0);
-            scene.add(spotLight);
-
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            scene.add(new THREE.PointLight(0x3b82f6, 1, 100).position.set(0, 30, 0));
             const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
             dirLight.position.set(20, 40, 20);
             dirLight.castShadow = true;
-            dirLight.shadow.mapSize.width = 1024;
-            dirLight.shadow.mapSize.height = 1024;
             scene.add(dirLight);
 
-            const floor = new THREE.Mesh(
-                new THREE.PlaneGeometry(200, 200),
-                new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.9 })
-            );
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.9 }));
             floor.rotation.x = -Math.PI / 2;
             floor.receiveShadow = true;
             scene.add(floor);
 
-            const grid = new THREE.GridHelper(100, 40, '#1e293b', '#0f172a');
-            scene.add(grid);
+            scene.add(new THREE.GridHelper(100, 40, '#1e293b', '#0f172a'));
 
             setupHandVisuals();
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -293,103 +280,50 @@
             let geom, color, halfSize = {x: 2, y: 2, z: 2};
 
             switch(type) {
-                case 'box':
-                    geom = new THREE.BoxGeometry(4,4,4);
-                    color = '#3b82f6';
-                    break;
-                case 'cylinder':
-                    geom = new THREE.CylinderGeometry(2,2,6,32);
-                    color = '#a855f7';
-                    halfSize = {x:2, y:3, z:2};
-                    break;
-                case 'beam':
-                    geom = new THREE.BoxGeometry(10,2,4);
-                    color = '#f97316';
-                    halfSize = {x:5, y:1, z:2};
-                    break;
-                case 'sphere':
-                    geom = new THREE.SphereGeometry(2.5, 32, 32);
-                    color = '#ef4444';
-                    halfSize = {x:2.5, y:2.5, z:2.5};
-                    break;
-                case 'cone':
-                    geom = new THREE.ConeGeometry(3, 8, 32);
-                    color = '#10b981';
-                    halfSize = {x:3, y:4, z:3};
-                    break;
-                case 'torus':
-                    geom = new THREE.TorusGeometry(4, 1.5, 16, 100);
-                    color = '#eab308';
-                    halfSize = {x:5.5, y:1.5, z:5.5};
-                    break;
-                case 'pyramid':
-                    geom = new THREE.ConeGeometry(3, 7, 4, 1);
-                    color = '#1f2937';
-                    halfSize = {x:3, y:3.5, z:3};
-                    break;
-                case 'octahedron':
-                    geom = new THREE.OctahedronGeometry(2.5);
-                    color = '#7c3aed';
-                    halfSize = {x:2.5, y:2.5, z:2.5};
-                    break;
-                case 'dodecahedron':
-                    geom = new THREE.DodecahedronGeometry(2.5);
-                    color = '#d97706';
-                    halfSize = {x:2.5, y:2.5, z:2.5};
-                    break;
-                case 'icosahedron':
-                    geom = new THREE.IcosahedronGeometry(2.5);
-                    color = '#06b6d4';
-                    halfSize = {x:2.5, y:2.5, z:2.5};
-                    break;
-                default:
-                    return;
+                case 'box': geom = new THREE.BoxGeometry(4,4,4); color = '#3b82f6'; break;
+                case 'cylinder': geom = new THREE.CylinderGeometry(2,2,6,32); color = '#a855f7'; halfSize = {x:2,y:3,z:2}; break;
+                case 'beam': geom = new THREE.BoxGeometry(10,2,4); color = '#f97316'; halfSize = {x:5,y:1,z:2}; break;
+                case 'sphere': geom = new THREE.SphereGeometry(2.5,32,32); color = '#ef4444'; halfSize = {x:2.5,y:2.5,z:2.5}; break;
+                case 'cone': geom = new THREE.ConeGeometry(3,8,32); color = '#10b981'; halfSize = {x:3,y:4,z:3}; break;
+                case 'torus': geom = new THREE.TorusGeometry(4,1.5,16,100); color = '#eab308'; halfSize = {x:5.5,y:1.5,z:5.5}; break;
+                case 'pyramid': geom = new THREE.ConeGeometry(3,7,4,1); color = '#1f2937'; halfSize = {x:3,y:3.5,z:3}; break;
+                case 'octahedron': geom = new THREE.OctahedronGeometry(2.5); color = '#7c3aed'; halfSize = {x:2.5,y:2.5,z:2.5}; break;
+                case 'dodecahedron': geom = new THREE.DodecahedronGeometry(2.5); color = '#d97706'; halfSize = {x:2.5,y:2.5,z:2.5}; break;
+                case 'icosahedron': geom = new THREE.IcosahedronGeometry(2.5); color = '#06b6d4'; halfSize = {x:2.5,y:2.5,z:2.5}; break;
+                default: return;
             }
 
             const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color, metalness: 0.2, roughness: 0.1 }));
             mesh.position.set(x, y, z);
             mesh.castShadow = mesh.receiveShadow = true;
-            mesh.userData = { 
-                type, 
-                velocity: {y:0}, 
-                isGrabbed: false, 
-                halfSize, 
-                prevPos: mesh.position.clone() 
-            };
+            mesh.userData = { type, velocity: {y:0}, isGrabbed: false, halfSize, prevPos: mesh.position.clone() };
             
             scene.add(mesh);
             objects.push(mesh);
-            if(!isLoad) saveData();
+            if (!isLoad) saveData();
         }
 
         function updatePhysics() {
-            const ray = new THREE.Raycaster();
-            const down = new THREE.Vector3(0,-1,0);
-
             objects.forEach(obj => {
-                if(obj.userData.isGrabbed) return;
+                if (obj.userData.isGrabbed) return;
                 
                 obj.userData.velocity.y -= GRAVITY_STRENGTH;
                 let nextY = obj.position.y + obj.userData.velocity.y;
-                let collided = false;
 
                 if (nextY - obj.userData.halfSize.y < 0) {
                     obj.position.y = obj.userData.halfSize.y;
                     obj.userData.velocity.y = 0;
-                    collided = true;
+                    return;
                 }
 
-                const collidables = objects.filter(o => o !== obj);
-                ray.set(new THREE.Vector3(obj.position.x, obj.position.y - obj.userData.halfSize.y + 0.1, obj.position.z), down);
-                const hits = ray.intersectObjects(collidables);
-
-                if(hits.length > 0 && hits[0].distance < Math.abs(obj.userData.velocity.y) + 0.2) {
+                const ray = new THREE.Raycaster(obj.position.clone().sub(new THREE.Vector3(0, obj.userData.halfSize.y - 0.1, 0)), new THREE.Vector3(0,-1,0));
+                const hits = ray.intersectObjects(objects.filter(o => o !== obj));
+                if (hits.length > 0 && hits[0].distance < Math.abs(obj.userData.velocity.y) + 0.2) {
                     obj.position.y = hits[0].point.y + obj.userData.halfSize.y;
                     obj.userData.velocity.y = 0;
-                    collided = true;
+                } else {
+                    obj.position.y = nextY;
                 }
-
-                if(!collided) obj.position.y = nextY;
             });
         }
 
@@ -411,9 +345,9 @@
                 if (handIndex >= handMeshes.length) return;
                 const handMesh = handMeshes[handIndex];
 
-                const mapX = (x) => (x - 0.5) * -50;
-                const mapY = (y) => (1 - y) * 35;
-                const mapZ = (z) => z * 40;
+                const mapX = x => (x - 0.5) * -50;
+                const mapY = y => (1 - y) * 35;
+                const mapZ = z => z * 40;
 
                 hand.forEach((lm, i) => {
                     handMesh.joints[i].position.set(mapX(lm.x), mapY(lm.y), mapZ(lm.z));
@@ -424,7 +358,8 @@
                     const p1 = handMesh.joints[conn[0]].position;
                     const p2 = handMesh.joints[conn[1]].position;
                     const pos = handMesh.lines[i].geometry.attributes.position.array;
-                    pos[0]=p1.x; pos[1]=p1.y; pos[2]=p1.z; pos[3]=p2.x; pos[4]=p2.y; pos[5]=p2.z;
+                    pos[0] = p1.x; pos[1] = p1.y; pos[2] = p1.z;
+                    pos[3] = p2.x; pos[4] = p2.y; pos[5] = p2.z;
                     handMesh.lines[i].geometry.attributes.position.needsUpdate = true;
                     handMesh.lines[i].visible = true;
                 });
@@ -439,10 +374,7 @@
                         let closest = null;
                         objects.forEach(o => {
                             let d = index.distanceTo(o.position);
-                            if (d < minD) {
-                                minD = d;
-                                closest = o;
-                            }
+                            if (d < minD) { minD = d; closest = o; }
                         });
                         if (closest) {
                             closest.userData.isGrabbed = true;
@@ -452,14 +384,10 @@
 
                     if (grabbedObjects[handIndex]) {
                         const target = new THREE.Vector3(index.x, index.y, index.z);
-
                         if (grabbedObjects[0] === grabbedObjects[1] && grabbedObjects[0]) {
-                            const otherIndex = handIndex === 0 ? 1 : 0;
-                            const otherHandMesh = handMeshes[otherIndex];
-                            const otherPinch = otherHandMesh.joints[8].position;
-                            target.lerp(otherPinch, 0.5);
+                            const other = handIndex === 0 ? handMeshes[1] : handMeshes[0];
+                            target.lerp(other.joints[8].position, 0.5);
                         }
-
                         grabbedObjects[handIndex].position.lerp(target, 0.4);
                     }
                 } else if (grabbedObjects[handIndex]) {
@@ -471,18 +399,19 @@
         }
 
         function initMediaPipe() {
-            const hands = new Hands({locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
+            const hands = new Hands({locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
             hands.setOptions({ 
                 maxNumHands: 2,
                 modelComplexity: 1, 
                 minDetectionConfidence: 0.7,
                 minTrackingConfidence: 0.5 
             });
-            hands.onResults((res) => {
-                const ctx = document.getElementById('guidance-canvas').getContext('2d');
-                ctx.clearRect(0,0,320,240);
 
-                if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
+            hands.onResults(res => {
+                const ctx = document.getElementById('guidance-canvas').getContext('2d');
+                ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
+                if (res.multiHandLandmarks?.length > 0) {
                     updateStatus(true);
                     handleHands(res.multiHandLandmarks);
                     document.getElementById('loading-screen').style.display = 'none';
@@ -501,20 +430,36 @@
                     saveData();
                 }
             });
-            const cam = new Camera(document.getElementById('webcam-video'), {
-                onFrame: async () => await hands.send({image: document.getElementById('webcam-video')}),
-                width: 320, height: 240
+
+            const video = document.getElementById('webcam-video');
+            const cam = new Camera(video, {
+                onFrame: async () => await hands.send({image: video}),
+                width: 320,
+                height: 240
             });
-            cam.start();
+
+            cam.start()
+               .then(() => console.log("Kamera berhasil dijalankan"))
+               .catch(err => {
+                   console.error("Camera error:", err);
+                   alert("Kamera ga bisa diakses nih bro...\nError: " + err.message + "\nCek izin kamera di browser ya!");
+                   document.getElementById('loading-screen').innerHTML = '<h2 class="text-red-400 text-2xl">Camera Error</h2><p class="text-slate-300 mt-4">Izinkan akses kamera di browser, lalu refresh.</p>';
+               });
         }
 
         function updateStatus(active) {
             isHandActive = active;
             const dot = document.getElementById('status-dot');
             const txt = document.getElementById('status-text');
-            dot.className = active ? "w-3 h-3 rounded-full bg-blue-400 mr-3 shadow-[0_0_12px_#60a5fa]" : "w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse";
-            txt.innerText = active ? "System Active (2 Hands)" : "Searching...";
-            txt.className = active ? "text-sm font-bold uppercase tracking-widest text-blue-400" : "text-sm font-bold uppercase tracking-widest text-slate-400";
+            if (active) {
+                dot.className = "w-3 h-3 rounded-full bg-blue-400 mr-3 shadow-[0_0_12px_#60a5fa]";
+                txt.innerText = "System Active (2 Hands)";
+                txt.className = "text-sm font-bold uppercase tracking-widest text-blue-400";
+            } else {
+                dot.className = "w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse shadow-[0_0_10px_#eab308]";
+                txt.innerText = "Searching...";
+                txt.className = "text-sm font-bold uppercase tracking-widest text-slate-400";
+            }
         }
 
         function saveData() {
@@ -530,7 +475,10 @@
             grabbedObjects = [null, null];
             saveData(); 
         }
-        
+
+        window.spawnObject = spawnObject;
+        window.clearAll = clearAll;
+
         window.onload = () => {
             initThreeJS();
             const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -544,4 +492,4 @@
         };
     </script>
 </body>
-  </html>
+                               </html>
