@@ -1,346 +1,375 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3D Sandbox Builder live • kholiddzz edition</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- three.js terbaru (r169 saat ini – lebih stabil + bug fix banyak) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/controls/OrbitControls.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pencari Kata Indonesia</title>
 
-  <!-- MediaPipe modern – lebih akurat & ringan -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14"></script>
+<style>
+/* MAINTENANCE SCREEN */
+#maintenance {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0a0a0a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  transition: opacity 0.6s ease;
+}
 
-  <style>
-    body,html { margin:0; padding:0; overflow:hidden; background:#020617; font-family: 'Inter',sans-serif; }
-    canvas { display:block; }
-    .glass { background:rgba(10,15,30,0.88); backdrop-filter:blur(16px); border:1px solid rgba(34,211,238,0.18); box-shadow:0 10px 30px -10px #000; }
-    #toast { transition:all .4s cubic-bezier(.175,.885,.32,1.275); opacity:0; transform:translateY(20px) scale(.9); }
-    #toast.show { opacity:1; transform:translateY(0) scale(1); }
-    #video-container {
-      position:fixed; bottom:16px; right:16px; width:180px; height:135px;
-      border-radius:12px; overflow:hidden; border:2px solid rgba(56,189,248,.45);
-      box-shadow:0 15px 20px -5px rgba(0,0,0,.65); z-index:50;
-    }
-    #webcam-video, #guidance-canvas { position:absolute; inset:0; transform:scaleX(-1); object-fit:cover; }
-    #tool-bar { position:fixed; top:16px; right:16px; z-index:60; display:flex; flex-wrap:wrap; gap:10px; }
-    .tool-btn {
-      padding:10px 16px; font-size:.95rem; font-weight:700; border-radius:14px;
-      transition:all .3s ease; box-shadow:0 4px 15px rgba(0,0,0,.5);
-    }
-    .tool-btn:hover { transform:scale(1.08) translateY(-2px); box-shadow:0 10px 25px rgba(0,0,0,.7); }
-  </style>
+.maintenance-box {
+  background: #111;
+  padding: 40px;
+  border-radius: 16px;
+  border: 1px solid #333;
+  text-align: center;
+  color: #fff;
+  max-width: 90%;
+}
+
+#maintenanceTime {
+  margin-top: 10px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* STYLE UTAMA */
+* { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 10px;
+}
+.container {
+  width: 100%;
+  max-width: 540px;
+  backdrop-filter: blur(12px);
+  background: rgba(18,18,18,0.96);
+  padding: 28px 24px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.95);
+  border: 1px solid #2a2a2a;
+  position: relative;
+}
+#jam {
+  position: absolute;
+  top: 14px; right: 18px;
+  font-size: 12px;
+  color: #888;
+  background: rgba(30,30,30,0.8);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+/* sisanya style sama seperti sebelumnya */
+.badge { display:inline-flex; align-items:center; gap:8px; background:#1c1c1c; padding:6px 14px; border-radius:999px; font-size:13px; margin-bottom:16px; font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.2s; text-decoration:none; color:#e0e0e0; }
+.badge:hover { background:#2c2c2c; transform:scale(1.03); }
+.verified { width:18px; height:18px; }
+h1 { font-size:32px; font-weight:700; color:#f5f5f5; margin-bottom:16px; text-align:center; }
+textarea { width:100%; height:100px; margin:16px 0 14px; border:1px solid #2e2e2e; border-radius:12px; padding:14px; background:#0f0f0f; color:#f0f0f0; font-size:15.5px; outline:none; resize:none; line-height:1.5; }
+textarea:focus { border-color:#4a4a4a; box-shadow:0 0 0 2.5px rgba(80,80,80,0.5); }
+button { width:100%; padding:14px; margin:8px 0; border:none; border-radius:12px; font-size:15.5px; cursor:pointer; font-weight:600; transition:all 0.22s; color:#fff; }
+.btn1 { background:#3a3a3a; }
+.btn2 { background:#4a4a4a; }
+.btn3 { background:#2a2a2a; }
+.btn4 { background:#5a5a5a; }
+button:hover { filter:brightness(1.25); transform:translateY(-2px); }
+#saran, #stats { margin:10px 0; font-size:13.5px; color:#bbb; text-align:center; line-height:1.4; }
+#hasilBox { margin-top:20px; background:#0d0d0d; border:1px solid #222; border-radius:12px; padding:16px 14px; max-height:380px; overflow-y:auto; scroll-behavior:smooth; }
+#hasil { display:flex; flex-wrap:wrap; gap:10px 12px; }
+.kata { background:#1a1a1a; padding:10px 16px; border-radius:10px; font-size:14.5px; border:1px solid #2f2f2f; cursor:pointer; color:#e0e0e0; transition:all 0.18s ease; box-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; flex:0 0 auto; max-width:100%; }
+.kata:hover { background:#2a2a2a; border-color:#505050; transform:scale(1.04); box-shadow:0 5px 14px rgba(0,0,0,0.55); }
+.kata.best { background:#404040; color:#ffffff; font-weight:600; border-color:#707070; }
+.highlight { background:#707070; color:#fff; padding:2px 5px; border-radius:4px; }
+.fav::after { content:"★"; color:#ccc; margin-left:7px; font-size:12px; }
+.counter { margin:0 0 14px; font-weight:600; color:#999; font-size:14.5px; text-align:center; width:100%; }
+.filter-row { display:flex; flex-wrap:wrap; gap:16px; margin:14px 0; font-size:14px; color:#ccc; justify-content:center; }
+.filter-row label { cursor:pointer; }
+input[type="range"] { accent-color:#888; width:110px; }
+input[type="checkbox"] { accent-color:#999; }
+#tutorialModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; justify-content:center; align-items:center; }
+#tutorialContent { background:#161616; padding:24px; border-radius:16px; max-width:90%; max-height:88vh; overflow-y:auto; border:1px solid #333; color:#ddd; position:relative; }
+.close-btn { position:absolute; top:10px; right:16px; font-size:36px; cursor:pointer; color:#777; }
+#toast { position:fixed; bottom:60px; left:50%; transform:translateX(-50%); background:#1e1e1e; color:#1d9bf0; padding:12px 28px; border-radius:12px; font-weight:600; font-size:15px; opacity:0; pointer-events:none; transition:all 0.4s ease; z-index:2000; border:1px solid #404040; }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(-25px); }
+</style>
 </head>
 <body>
 
-<div id="canvas-container" class="absolute inset-0"></div>
-
-<div id="ui-layer" class="absolute inset-0 pointer-events-none p-4 md:p-8">
-  <div class="flex justify-between items-start">
-    <div class="flex flex-col gap-1 pointer-events-auto">
-      <h1 class="text-white text-3xl font-black tracking-tighter italic uppercase">Sandbox <span class="text-blue-500">v4</span></h1>
-      <div id="status-indicator" class="glass inline-flex items-center px-4 py-2 rounded-full self-start shadow-lg">
-        <span id="status-dot" class="w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse shadow-[0_0_10px_#eab308]"></span>
-        <span id="status-text" class="text-sm font-bold uppercase tracking-widest text-slate-200">Initializing...</span>
-      </div>
-    </div>
-
-    <div id="toast" class="glass px-6 py-3 rounded-2xl shadow-2xl pointer-events-auto hidden">
-      <p class="text-blue-400 text-sm font-bold tracking-wide uppercase">Saved to LocalStorage</p>
-    </div>
-  </div>
-
-  <div id="tool-bar" class="glass">
-
-    <!-- tombol spawn sama seperti lu, cuma gua tambah scale biar konsisten -->
-    <button onclick="spawnObject('box',0,15,0)" class="tool-btn bg-slate-800/70 hover:bg-blue-700/90 text-white border border-blue-500/30 hover:border-blue-400">Block</button>
-    <button onclick="spawnObject('sphere',0,15,0)" class="tool-btn bg-slate-800/70 hover:bg-red-700/90 text-white border border-red-500/30 hover:border-red-400">Sphere</button>
-    <button onclick="spawnObject('cylinder',0,15,0)" class="tool-btn bg-slate-800/70 hover:bg-purple-700/90 text-white border border-purple-500/30 hover:border-purple-400">Pillar</button>
-    <!-- sisanya lu tambah sendiri, sama aja -->
-
-    <button onclick="clearAll()" class="tool-btn bg-red-950/80 hover:bg-red-800/90 text-red-200 hover:text-white border border-red-700/50 font-extrabold uppercase tracking-wider animate-pulse">Reset All</button>
-
-    <a href="https://www.tiktok.com/@kholiddzz" target="_blank" class="tool-btn bg-gradient-to-r from-cyan-900/70 to-blue-900/70 hover:from-cyan-700/90 hover:to-blue-700/90 text-cyan-300 hover:text-white border border-cyan-400/50 font-bold italic">kholiddzz</a>
+<div id="maintenance">
+  <div class="maintenance-box">
+    <h1>Segera Hadir 🚧</h1>
+    <div id="maintenanceTime">Memuat waktu...</div>
   </div>
 </div>
 
-<div id="video-container">
-  <video id="webcam-video" autoplay playsinline></video>
-  <canvas id="guidance-canvas"></canvas>
-</div>
+<div class="container" id="mainContent" style="opacity:0; transition:opacity 0.8s ease;">
+  <div id="jam">Memuat waktu...</div>
 
-<div id="loading-screen" class="absolute inset-0 z-50 bg-[#020617] flex flex-col items-center justify-center">
-  <div class="relative w-24 h-24 mb-8">
-    <div class="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
-    <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+  <a href="https://www.tiktok.com/@kholiddzz" target="_blank" class="badge" onclick="showVerified()">
+    @Kholiddzz
+    <svg class="verified" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="#1d9bf0"/>
+      <path d="M7 12.5L10.2 15.5L17 9.5" stroke="white" stroke-width="2.5" fill="none"/>
+    </svg>
+  </a>
+
+  <h1>Pencari Kata</h1>
+
+  <textarea id="input" placeholder="Ketik pola / kata di sini..."></textarea>
+
+  <div class="filter-row">
+    <label><input type="checkbox" id="realtime" checked> Realtime</label>
+    <label><input type="checkbox" id="highlightHuruf" checked> Highlight</label>
+    <label><input type="checkbox" id="favoritOnly"> Favorit saja</label>
   </div>
-  <h2 class="text-white text-2xl font-black tracking-widest uppercase">Crushing Reality...</h2>
+
+  <div class="filter-row" style="justify-content:space-between; gap:12px; flex-wrap:nowrap;">
+    Panjang: 
+    <input type="range" id="minLen" min="2" max="16" value="3"> <span id="minVal">3</span>
+    —
+    <input type="range" id="maxLen" min="2" max="16" value="16"> <span id="maxVal">16</span>
+  </div>
+
+  <button class="btn1" onclick="cari('depan')">Cari dari Depan</button>
+  <button class="btn2" onclick="cari('belakang')">Cari dari Belakang</button>
+  <button class="btn3" onclick="cari('semua')">Cari Semua</button>
+  <button class="btn4" onclick="cariAnagram()">Cari Anagram</button>
+
+  <div class="tutorial-wrapper" style="margin:20px 0; text-align:center;">
+    <button onclick="document.getElementById('tutorialModal').style.display='flex'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16V12"/>
+        <circle cx="12" cy="8" r="1" fill="#aaa"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="saran"></div>
+  <div id="stats"></div>
+
+  <div id="hasilBox">
+    <div id="hasil">Memuat kamus...</div>
+  </div>
 </div>
 
-<script type="module">
-  import { Hands } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+<div id="toast">Terverifikasi</div>
 
-  const { Hands: HandsTask, FilesetResolver } = Hands;
+<div id="tutorialModal" onclick="if(event.target===this)this.style.display='none'">
+  <div id="tutorialContent">
+    <span class="close-btn" onclick="document.getElementById('tutorialModal').style.display='none'">×</span>
+    <h2>Cara Pakai</h2>
+    <p>Ketik pola → pilih tombol atau biarkan Realtime aktif.</p>
+    <ul style="padding-left:20px; font-size:14px; line-height:1.6; margin:12px 0;">
+      <li><b>Dari Depan</b> → awalan kata</li>
+      <li><b>Dari Belakang</b> → akhiran kata</li>
+      <li><b>Cari Semua</b> → mengandung huruf/pola</li>
+      <li><b>Anagram</b> → huruf sama (acak)</li>
+      <li>Double-click kata → tambah/hapus favorit ★</li>
+      <li>Klik kata → salin ke clipboard</li>
+    </ul>
+    <p style="margin-top:20px; text-align:center;">Selamat mencoba! ✦</p>
+  </div>
+</div>
 
-  let scene, camera, renderer, controls;
-  let objects = [];
-  let handLandmarker;
-  let video, canvas, ctx;
-  let grabbed = [null, null];
-  const GRAVITY = 0.08;
-  const PINCH_THRESHOLD = 0.035; // lebih kecil karena normalized 0–1
+<script>
+// MAINTENANCE (kata "Website aktif dalam" sudah dihapus)
+const maintenanceEnd = new Date(2028, 2, 12, 22, 0, 0).getTime(); // 22:00 WIB, 12 Maret 2026
 
-  async function init() {
-    // ─── Three.js ───────────────────────────────────────
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x020617);
-    scene.fog = new THREE.Fog(0x020617, 40, 120);
+function updateMaintenance() {
+  const now = new Date().getTime();
+  const diff = maintenanceEnd - now;
 
-    camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 200);
-    camera.position.set(0, 18, 45);
-
-    renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(innerWidth, innerHeight);
-    renderer.shadowMap.enabled = true;
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.minDistance = 10;
-    controls.maxDistance = 120;
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const dir = new THREE.DirectionalLight(0xffffff, 1.1);
-    dir.position.set(25, 60, 30);
-    dir.castShadow = true;
-    scene.add(dir);
-
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(300,300),
-      new THREE.MeshStandardMaterial({color:0x0f172a, roughness:0.85})
-    );
-    floor.rotation.x = -Math.PI/2;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
-    // ─── MediaPipe Hands (modern) ───────────────────────
-    const fileset = await FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-    );
-    handLandmarker = await HandsTask.createFromOptions(fileset, {
-      baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task` },
-      runningMode: "VIDEO",
-      numHands: 2,
-      minHandDetectionConfidence: 0.65,
-      minTrackingConfidence: 0.55
-    });
-
-    video = document.getElementById('webcam-video');
-    canvas = document.getElementById('guidance-canvas');
-    ctx = canvas.getContext('2d');
-    canvas.width = 320; canvas.height = 240;
-
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
-    video.srcObject = stream;
-    video.onloadedmetadata = () => {
-      video.play();
-      predictLoop();
-    };
-
-    loadSaved();
-    animate();
-  }
-
-  async function predictLoop() {
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      ctx.save();
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.scale(-1,1);
-      ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-      ctx.restore();
-
-      const results = await handLandmarker.detectForVideo(video, performance.now());
-
-      if (results.landmarks?.length > 0) {
-        updateStatus(true);
-        handleHands(results.landmarks);
-        // optional: draw landmarks di canvas kalo lu mau visual guidance
-      } else {
-        updateStatus(false);
-        releaseAllHands();
-      }
+  if (diff <= 0) {
+    const maint = document.getElementById("maintenance");
+    const mainCont = document.getElementById("mainContent");
+    if (maint && mainCont) {
+      maint.style.opacity = "0";
+      setTimeout(() => {
+        maint.style.display = "none";
+        mainCont.style.opacity = "1";
+      }, 600);
     }
-    requestAnimationFrame(predictLoop);
+    return;
   }
 
-  function handleHands(landmarkSets) {
-    landmarkSets.forEach((landmarks, handIdx) => {
-      if (handIdx > 1) return;
+  const menit = Math.floor(diff / 60000);
+  const detik = Math.floor((diff % 60000) / 1000);
 
-      const thumb = landmarks[4];
-      const index = landmarks[8];
-      const pinchDist = Math.hypot(
-        thumb.x - index.x,
-        thumb.y - index.y,
-        thumb.z - index.z
-      );
+  document.getElementById("maintenanceTime").innerHTML = 
+    menit + " menit " + detik + " detik";
+}
 
-      const worldPos = new THREE.Vector3(
-        (index.x - 0.5) * 60,
-        (1 - index.y) * 50 - 5,
-        index.z * -50 + 10   // z agak ditekan biar ga terlalu jauh
-      );
+setInterval(updateMaintenance, 1000);
+updateMaintenance();
 
-      if (pinchDist < PINCH_THRESHOLD) {
-        if (!grabbed[handIdx]) {
-          let closest = null, minDist = 14;
-          objects.forEach(obj => {
-            const d = obj.position.distanceTo(worldPos);
-            if (d < minDist) { minDist = d; closest = obj; }
-          });
-          if (closest) {
-            grabbed[handIdx] = closest;
-            closest.userData.isGrabbed = true;
-          }
-        }
+// KODE PENCARI KATA (diperbaiki sedikit typo di class kata)
+const kataTambahan = [
+  "adaptif","adiktif","administratif","afektif","agresif","aktif","alternatif","argumentatif","asosiatif","atraktif",
+  "autoritatif","deduktif","definitif","deformatif","demonstratif","deskriptif","detektif","direktif","distributif","edukatif",
+  "efektif","ekspansif","ekspresif","eksploratif","eksploitatif","ekstensif","evaluatif","evokatif","fiktif","formulatif",
+  "generatif","ilustratif","imitatif","imperatif","implikatif","informatif","inovatif","instruktif","integratif","intensif",
+  "interaktif","interpretatif","intuitif","inventif","investigatif","justifikatif","kognitif","kolektif","komparatif","komunikatif",
+  "konfirmatif","konotatif","konstruktif","konsultatif","konsumtif","kreatif","kualitatif","kuantitatif","legislatif","lokatif",
+  "manipulatif","naratif","objektif","operatif","partisipatif","pasif","persuasif","prediktif","preventif","produktif",
+  "progresif","prohibitif","protektif","provokatif","reaktif","reflektif","regulatif","relatif","representatif","reproduktif",
+  "restriktif","selektif","sensitif","solutif","spesifik","subjektif","substantif","sugestif","suportif","transformatif",
+  "xantat","xantenda","xantofil","xenia","xenofili","xenofobia","xenoglosia","xenokrasi","xenolit","xenomania",
+  "xenon","xenongraf","xerofil","xeroftalmia","xerografi","xerosis","xifoid","xilem","xilena","xilosa",
+  "xilofon","xilograf","xilografi","xiloid","xiloidina","xilol","xilologi","xilonit","xilos"
+].map(w=>w.toLowerCase());
 
-        if (grabbed[handIdx]) {
-          // simple average kalo dua tangan pegang satu object
-          if (grabbed[0] === grabbed[1] && grabbed[0]) {
-            const otherIdx = handIdx ^ 1;
-            const otherLandmarks = landmarkSets[otherIdx];
-            if (otherLandmarks) {
-              const otherPos = new THREE.Vector3(
-                (otherLandmarks[8].x - 0.5)*60,
-                (1 - otherLandmarks[8].y)*50 - 5,
-                otherLandmarks[8].z * -50 + 10
-              );
-              worldPos.lerp(otherPos, 0.5);
-            }
-          }
+let kamus = [];
+let favorites = JSON.parse(localStorage.getItem("favKata") || "[]");
 
-          grabbed[handIdx].position.lerp(worldPos, 0.55); // lebih smooth
-        }
-      } else if (grabbed[handIdx]) {
-        grabbed[handIdx].userData.isGrabbed = false;
-        grabbed[handIdx] = null;
-        save();
-      }
-    });
-  }
-
-  function releaseAllHands() {
-    grabbed.forEach((obj, i) => {
-      if (obj) {
-        obj.userData.isGrabbed = false;
-        grabbed[i] = null;
-      }
-    });
-    save();
-  }
-
-  function updatePhysics() {
-    objects.forEach(obj => {
-      if (obj.userData.isGrabbed) return;
-
-      obj.userData.velocity = (obj.userData.velocity || 0) - GRAVITY;
-      let ny = obj.position.y + obj.userData.velocity;
-
-      // simple floor
-      if (ny < 2) {
-        ny = 2;
-        obj.userData.velocity = 0;
-      }
-
-      obj.position.y = ny;
-    });
-  }
-
-  function spawnObject(type, x=0, y=15, z=0) {
-    let geo, color = 0xffffff, scale = 1;
-
-    switch(type){
-      case 'box':     geo = new THREE.BoxGeometry(5,5,5); color=0x3b82f6; break;
-      case 'sphere':  geo = new THREE.SphereGeometry(3,32,32); color=0xef4444; scale=1.1; break;
-      case 'cylinder':geo = new THREE.CylinderGeometry(2.5,2.5,8,24); color=0xa855f7; break;
-      // tambah sendiri sisanya
-      default: return;
-    }
-
-    const mat = new THREE.MeshStandardMaterial({color, metalness:0.15, roughness:0.25});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(x,y,z);
-    mesh.scale.setScalar(scale);
-    mesh.castShadow = mesh.receiveShadow = true;
-    mesh.userData = { type, velocity: 0, isGrabbed: false };
-
-    scene.add(mesh);
-    objects.push(mesh);
-    save();
-  }
-
-  function save() {
-    const data = objects.map(o => ({
-      type: o.userData.type,
-      x: o.position.x.toFixed(2),
-      y: o.position.y.toFixed(2),
-      z: o.position.z.toFixed(2)
-    }));
-    localStorage.setItem('kholiddzz_sandbox', JSON.stringify(data));
-
-    const t = document.getElementById('toast');
-    t.classList.remove('hidden');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 1800);
-  }
-
-  function loadSaved() {
-    const raw = localStorage.getItem('kholiddzz_sandbox');
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      data.forEach(d => spawnObject(d.type, Number(d.x), Number(d.y), Number(d.z)));
-    } catch(e) {}
-  }
-
-  function clearAll() {
-    objects.forEach(o => scene.remove(o));
-    objects.length = 0;
-    grabbed.fill(null);
-    localStorage.removeItem('kholiddzz_sandbox');
-  }
-
-  function updateStatus(active) {
-    const dot = document.getElementById('status-dot');
-    const txt = document.getElementById('status-text');
-    if (active) {
-      dot.className = "w-3 h-3 rounded-full bg-emerald-400 mr-3 shadow-[0_0_12px_#34d399]";
-      txt.textContent = "Hands Locked";
-      txt.className = "text-sm font-bold uppercase tracking-widest text-emerald-400";
-      document.getElementById('loading-screen').style.display = 'none';
-    } else {
-      dot.className = "w-3 h-3 rounded-full bg-yellow-500 mr-3 animate-pulse shadow-[0_0_10px_#eab308]";
-      txt.textContent = "Waiting Hands...";
-      txt.className = "text-sm font-bold uppercase tracking-widest text-slate-300";
-    }
-  }
-
-  function animate() {
-    requestAnimationFrame(animate);
-    updatePhysics();
-    controls.update();
-    renderer.render(scene, camera);
-  }
-
-  window.addEventListener('resize', () => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
+fetch("https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/id/id_50k.txt")
+  .then(res => res.text())
+  .then(data => {
+    kamus = data.split("\n")
+      .map(x => x.split(" ")[0]?.toLowerCase?.())
+      .filter(k => k && /^[a-z]+$/.test(k) && k.length >= 3 && k.length <= 16);
+    kamus = [...new Set([...kataTambahan, ...kamus])];
+    document.getElementById("hasil").innerHTML = `Kamus siap (${kamus.length.toLocaleString('id-ID')} kata)`;
+  })
+  .catch(() => {
+    document.getElementById("hasil").innerHTML = "Gagal memuat kamus – cek koneksi";
   });
 
-  init().catch(console.error);
+let hariSebelumnya = null;
+function updateJam() {
+  const now = new Date();
+  const opt = { timeZone: 'Asia/Jakarta', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+  document.getElementById("jam").innerHTML = new Intl.DateTimeFormat('id-ID', opt).format(now) + " WIB";
+  const hari = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
+  if (hariSebelumnya && hariSebelumnya !== hari) window.location.reload();
+  hariSebelumnya = hari;
+}
+setInterval(updateJam, 1000);
+updateJam();
+
+function showVerified() {
+  const toast = document.getElementById("toast");
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function getInput() { return document.getElementById("input").value.toLowerCase().trim(); }
+function getMinLen() { return parseInt(document.getElementById("minLen").value) || 2; }
+function getMaxLen() { return parseInt(document.getElementById("maxLen").value) || 16; }
+
+function highlightMatch(word, query) {
+  if (!query || !document.getElementById("highlightHuruf").checked) return word;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped.split('').join('|')})`, 'gi');
+  return word.replace(regex, '<span class="highlight">$1</span>');
+}
+
+function tampil(data) {
+  const el = document.getElementById("hasil");
+  let filtered = [...new Set(data)].filter(w => w.length >= getMinLen() && w.length <= getMaxLen());
+  if (document.getElementById("favoritOnly").checked) {
+    filtered = filtered.filter(w => favorites.includes(w));
+  }
+  if (!filtered.length) {
+    el.innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777; width:100%; font-size:15px;'>Tidak ada kata yang cocok 😔<br>Coba pola lain atau matikan filter</div>";
+    document.getElementById("stats").innerHTML = "";
+    return;
+  }
+
+  filtered.sort((a,b) => b.length - a.length || a.localeCompare(b));
+  const best = filtered[0];
+  let html = `<div class="counter">${filtered.length.toLocaleString('id-ID')} kata ditemukan</div>`;
+  
+  filtered.slice(0, 2500).forEach(k => {
+    const isBest = k === best ? ' best' : '';
+    const isFav = favorites.includes(k) ? ' fav' : '';
+    html += `
+      <div class="kata\( {isBest} \){isFav}" 
+           onclick="navigator.clipboard.writeText('${k}');this.style.background='#404040';setTimeout(()=>this.style.background='',500)"
+           ondblclick="toggleFav('${k}',this)">
+        ${highlightMatch(k, getInput())}
+      </div>`;
+  });
+  
+  el.innerHTML = html;
+
+  const avg = filtered.length ? (filtered.reduce((s,w)=>s+w.length,0)/filtered.length).toFixed(1) : 0;
+  document.getElementById("stats").innerHTML = `Rata-rata panjang: ${avg} huruf`;
+}
+
+function toggleFav(kata, el) {
+  if (favorites.includes(kata)) {
+    favorites = favorites.filter(f => f !== kata);
+    el.classList.remove("fav");
+  } else {
+    favorites.push(kata);
+    el.classList.add("fav");
+  }
+  localStorage.setItem("favKata", JSON.stringify(favorites));
+}
+
+function cari(mode) {
+  const k = getInput();
+  if (!k) {
+    document.getElementById("hasil").innerHTML = "<div style='text-align:center; padding:40px 20px; color:#777;'>Masukkan pola atau kata dulu ya...</div>";
+    return;
+  }
+  let res = kamus;
+  if (mode === 'depan') res = res.filter(x => x.startsWith(k));
+  else if (mode === 'belakang') res = res.filter(x => x.endsWith(k));
+  else res = res.filter(x => x.includes(k));
+  tampil(res);
+}
+
+function cariAnagram() {
+  let k = getInput().replace(/[^a-z]/g,'');
+  if (k.length < 3) {
+    document.getElementById("hasil").innerHTML = "<div style='text-align:center;padding:40px 20px;color:#777;'>Minimal 3 huruf untuk cari anagram</div>";
+    return;
+  }
+  const sorted = k.split('').sort().join('');
+  const res = kamus.filter(w => w.length === k.length && w.split('').sort().join('') === sorted);
+  tampil(res);
+}
+
+let timeout;
+document.getElementById("input").addEventListener("input", () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    if (document.getElementById("realtime").checked) cari('semua');
+  }, 280);
+
+  const k = getInput();
+  if (k.length < 2) {
+    document.getElementById("saran").innerHTML = "";
+    return;
+  }
+  const saranList = kamus.filter(x => x.startsWith(k)).slice(0,9);
+  document.getElementById("saran").innerHTML = saranList.length ? "Saran awalan: " + saranList.join(" • ") : "";
+});
+
+document.getElementById("minLen").addEventListener("input", e => {
+  document.getElementById("minVal").textContent = e.target.value;
+  if (document.getElementById("realtime").checked) cari('semua');
+});
+document.getElementById("maxLen").addEventListener("input", e => {
+  document.getElementById("maxVal").textContent = e.target.value;
+  if (document.getElementById("realtime").checked) cari('semua');
+});
+["realtime", "favoritOnly", "highlightHuruf"].forEach(id => {
+  document.getElementById(id).addEventListener("change", () => {
+    if (document.getElementById("realtime").checked) cari('semua');
+  });
+});
 </script>
 </body>
-</html>
+    </html>
